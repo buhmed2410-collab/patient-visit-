@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة المؤشرات الصحية - محافظة ظفار</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --bg2: #111827;
+    --bg3: #1a2235;
+    --card: rgba(255,255,255,0.04);
+    --card-hover: rgba(255,255,255,0.08);
+    --border: rgba(255,255,255,0.08);
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --text: #f1f5f9;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --danger: #ef4444;
+    --success: #10b981;
+    --glow: rgba(0,212,255,0.15);
+    --radius: 16px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+    --font: 'Cairo', 'Tajawal', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+  }
+
+  .theme-bento {
+    --bg: #f0f4f8;
+    --bg2: #e2e8f0;
+    --bg3: #ffffff;
+    --card: #ffffff;
+    --card-hover: #f8fafc;
+    --border: #cbd5e1;
+    --accent: #6366f1;
+    --accent2: #ec4899;
+    --accent3: #059669;
+    --accent4: #d97706;
+    --text: #0f172a;
+    --text2: #475569;
+    --text3: #94a3b8;
+    --glow: rgba(99,102,241,0.1);
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
+
+  .theme-luxury {
+    --bg: #1a1209;
+    --bg2: #241a0c;
+    --bg3: #2e2010;
+    --card: rgba(212,175,55,0.06);
+    --card-hover: rgba(212,175,55,0.12);
+    --border: rgba(212,175,55,0.2);
+    --accent: #d4af37;
+    --accent2: #b8860b;
+    --accent3: #cd853f;
+    --accent4: #daa520;
+    --text: #fef3c7;
+    --text2: #d4af37;
+    --text3: #92722a;
+    --glow: rgba(212,175,55,0.12);
+    --shadow: 0 8px 32px rgba(0,0,0,0.6);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+  
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font);
+    min-height: 100vh;
+    transition: all 0.4s ease;
+    overflow-x: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    position: fixed;
+    top: 0; right: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--bg2);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    transition: all 0.4s ease;
+    overflow-y: auto;
+  }
+
+  .sidebar-logo {
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .sidebar-logo .logo-icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 8px;
+    box-shadow: 0 4px 16px var(--glow);
+  }
+
+  .sidebar-logo h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+
+  .sidebar-logo p {
+    font-size: 10px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .nav-section {
+    padding: 12px 12px 4px;
+  }
+
+  .nav-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 0 4px;
+    margin-bottom: 6px;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2px;
+    font-size: 13px;
+    color: var(--text2);
+  }
+
+  .nav-item:hover { background: var(--card); color: var(--text); }
+  .nav-item.active { background: linear-gradient(135deg, var(--accent)22, var(--accent2)11); color: var(--accent); border: 1px solid var(--accent)33; }
+  .nav-item .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+  .nav-item .nav-text { flex: 1; font-weight: 500; }
+  .nav-item .nav-badge {
+    background: var(--accent)22;
+    color: var(--accent);
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 20px;
+    font-family: var(--mono);
+  }
+
+  /* Controls */
+  .sidebar-controls {
+    padding: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: auto;
+  }
+
+  .ctrl-label { font-size: 9px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+
+  .theme-btns, .lang-btns {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .ctrl-btn {
+    flex: 1;
+    padding: 7px 4px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    color: var(--text2);
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+    font-family: var(--font);
+  }
+
+  .ctrl-btn:hover { border-color: var(--accent); color: var(--text); }
+  .ctrl-btn.active { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 700; }
+
+  /* MAIN CONTENT */
+  .main {
+    margin-right: 240px;
+    min-height: 100vh;
+    transition: all 0.4s;
+  }
+
+  /* PAGE HEADER */
+  .page-header {
+    padding: 24px 28px 0;
+    position: relative;
+  }
+
+  .page-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .page-title-group {}
+  .page-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1.2;
+  }
+  .page-subtitle { font-size: 13px; color: var(--text3); margin-top: 4px; }
+
+  .page-stats-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .header-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 14px;
+    text-align: center;
+  }
+  .header-stat .hs-val { font-size: 18px; font-weight: 900; color: var(--accent); font-family: var(--mono); }
+  .header-stat .hs-lbl { font-size: 10px; color: var(--text3); }
+
+  /* FILTER BAR */
+  .filter-bar {
+    padding: 0 28px 16px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 6px 12px;
+  }
+
+  .filter-label { font-size: 11px; color: var(--text3); white-space: nowrap; }
+
+  .filter-select {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 12px;
+    font-family: var(--font);
+    cursor: pointer;
+    outline: none;
+    padding: 2px 4px;
+  }
+
+  .filter-select option { background: var(--bg2); color: var(--text); }
+
+  .filter-reset {
+    background: var(--danger)22;
+    border: 1px solid var(--danger)44;
+    color: var(--danger);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: var(--font);
+  }
+  .filter-reset:hover { background: var(--danger)44; }
+
+  /* PAGE CONTENT */
+  .page-content {
+    padding: 0 28px 28px;
+    display: none;
+  }
+  .page-content.active { display: block; }
+
+  /* GRIDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .kpi-card:hover { border-color: var(--accent)55; transform: translateY(-2px); box-shadow: var(--shadow); }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--c1, var(--accent)), var(--c2, var(--accent2)));
+  }
+
+  .kpi-icon { font-size: 28px; margin-bottom: 10px; }
+  .kpi-value { font-size: 28px; font-weight: 900; color: var(--text); font-family: var(--mono); line-height: 1; }
+  .kpi-label { font-size: 12px; color: var(--text2); margin-top: 6px; }
+  .kpi-sub { font-size: 10px; color: var(--text3); margin-top: 4px; }
+  .kpi-trend {
+    position: absolute;
+    top: 14px; left: 14px;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-family: var(--mono);
+  }
+  .trend-up { background: var(--success)22; color: var(--success); }
+  .trend-dn { background: var(--danger)22; color: var(--danger); }
+
+  .chart-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .chart-grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: all 0.3s;
+  }
+  .chart-card:hover { border-color: var(--accent)33; }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-card.span2 { grid-column: span 2; }
+
+  .chart-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle { font-size: 11px; color: var(--text3); margin-bottom: 16px; }
+
+  .chart-wrap {
+    position: relative;
+    height: 220px;
+  }
+  .chart-wrap.tall { height: 300px; }
+  .chart-wrap.short { height: 160px; }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .data-table th {
+    padding: 10px 12px;
+    text-align: right;
+    color: var(--text3);
+    font-size: 11px;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .data-table td {
+    padding: 9px 12px;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border)55;
+  }
+  .data-table tr:hover td { background: var(--card-hover); color: var(--text); }
+  .data-table .num { font-family: var(--mono); color: var(--accent); }
+  .data-table .rank { color: var(--text3); font-family: var(--mono); font-size: 10px; }
+
+  /* PROGRESS BAR */
+  .progress-list { display: flex; flex-direction: column; gap: 10px; }
+  .progress-item {}
+  .progress-header { display: flex; justify-content: space-between; margin-bottom: 5px; }
+  .progress-name { font-size: 12px; color: var(--text2); }
+  .progress-val { font-size: 12px; color: var(--accent); font-family: var(--mono); font-weight: 700; }
+  .progress-track { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+
+  /* PILLS */
+  .pill-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--text2);
+  }
+  .pill:hover, .pill.active { background: var(--accent)22; border-color: var(--accent); color: var(--accent); }
+
+  /* INSIGHTS BOX */
+  .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .insight-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .insight-icon { font-size: 22px; flex-shrink: 0; }
+  .insight-title { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .insight-text { font-size: 11px; color: var(--text2); line-height: 1.5; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* RTL/LTR */
+  [dir="ltr"] .sidebar { right: auto; left: 0; border-left: none; border-right: 1px solid var(--border); }
+  [dir="ltr"] .main { margin-right: 0; margin-left: 240px; }
+  [dir="ltr"] .data-table th, [dir="ltr"] .data-table td { text-align: left; }
+
+  /* ANIMATION */
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+  .page-content.active { animation: fadeIn 0.3s ease; }
+
+  /* Immersive bg */
+  .immersive-bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .immersive-bg::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, var(--accent)08 0%, transparent 70%);
+    top: -200px; right: 0;
+    border-radius: 50%;
+    animation: float1 8s ease-in-out infinite;
+  }
+  .immersive-bg::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, var(--accent2)08 0%, transparent 70%);
+    bottom: 100px; left: 100px;
+    border-radius: 50%;
+    animation: float2 10s ease-in-out infinite;
+  }
+  @keyframes float1 { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(40px); } }
+  @keyframes float2 { 0%,100%{ transform: translateY(0); } 50%{ transform: translateY(-30px); } }
+
+  .theme-bento .immersive-bg::before, .theme-bento .immersive-bg::after { display: none; }
+
+  /* Bento theme overrides */
+  .theme-bento .kpi-card { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .theme-bento .sidebar { box-shadow: 2px 0 20px rgba(0,0,0,0.06); }
+
+  /* Luxury overrides */
+  .theme-luxury .kpi-value { color: var(--accent); }
+  .theme-luxury .kpi-card::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+</style>
+</head>
+<body>
+
+<div class="immersive-bg"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🏥</div>
+    <h2 id="logo-title">المؤشرات الصحية<br>محافظة ظفار</h2>
+    <p id="logo-sub">2023 – 2025</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label" id="nav-label-pages">الصفحات</div>
+    <div class="nav-item active" onclick="gotoPage('overview')">
+      <span class="nav-icon">📊</span>
+      <span class="nav-text" data-ar="المؤشرات الصحية" data-en="Health Indicators">المؤشرات الصحية</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('wilayat')">
+      <span class="nav-icon">🗺️</span>
+      <span class="nav-text" data-ar="حسب الولاية" data-en="By Wilayat">حسب الولاية</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('estab')">
+      <span class="nav-icon">🏨</span>
+      <span class="nav-text" data-ar="المؤسسات الصحية" data-en="Health Facilities">المؤسسات الصحية</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('visit')">
+      <span class="nav-icon">🩺</span>
+      <span class="nav-text" data-ar="أنواع الزيارة" data-en="Visit Types">أنواع الزيارة</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('year')">
+      <span class="nav-icon">📅</span>
+      <span class="nav-text" data-ar="حسب السنوات" data-en="By Year">حسب السنوات</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('month')">
+      <span class="nav-icon">🗓️</span>
+      <span class="nav-text" data-ar="حسب الأشهر" data-en="By Month">حسب الأشهر</span>
+    </div>
+    <div class="nav-item" onclick="gotoPage('workday')">
+      <span class="nav-icon">⚙️</span>
+      <span class="nav-text" data-ar="أيام العمل" data-en="Work Days">أيام العمل</span>
+    </div>
+  </div>
+
+  <div class="sidebar-controls">
+    <div class="ctrl-label" id="ctrl-label-theme" data-ar="التصميم" data-en="Theme">التصميم</div>
+    <div class="theme-btns">
+      <button class="ctrl-btn active" onclick="setTheme('immersive')" data-ar="ليلي" data-en="Dark">ليلي</button>
+      <button class="ctrl-btn" onclick="setTheme('bento')" data-ar="بنتو" data-en="Bento">بنتو</button>
+      <button class="ctrl-btn" onclick="setTheme('luxury')" data-ar="ذهبي" data-en="Gold">ذهبي</button>
+    </div>
+    <div class="ctrl-label" id="ctrl-label-lang" data-ar="اللغة" data-en="Language">اللغة</div>
+    <div class="lang-btns">
+      <button class="ctrl-btn active" onclick="setLang('ar')">العربية</button>
+      <button class="ctrl-btn" onclick="setLang('en')">English</button>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+  <!-- PAGE 1: OVERVIEW -->
+  <div id="page-overview" class="page-content active">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title" id="p1-title">📊 المؤشرات الصحية</div>
+          <div class="page-subtitle" id="p1-sub">ملخص شامل لبيانات التردد على المؤسسات الصحية بمحافظة ظفار</div>
+        </div>
+        <div class="page-stats-row">
+          <div class="header-stat">
+            <div class="hs-val">5.68M</div>
+            <div class="hs-lbl" data-ar="إجمالي الزيارات" data-en="Total Visits">إجمالي الزيارات</div>
+          </div>
+          <div class="header-stat">
+            <div class="hs-val">44</div>
+            <div class="hs-lbl" data-ar="مؤسسة صحية" data-en="Facilities">مؤسسة صحية</div>
+          </div>
+          <div class="header-stat">
+            <div class="hs-val">10</div>
+            <div class="hs-lbl" data-ar="ولاية" data-en="Wilayats">ولاية</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-content active" style="display:block; padding: 0 28px 28px;">
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--c1:#00d4ff;--c2:#7c3aed;">
+          <div class="kpi-icon">🏥</div>
+          <div class="kpi-value">5,680,092</div>
+          <div class="kpi-label" data-ar="إجمالي الزيارات (2023-2025)" data-en="Total Visits (2023-2025)">إجمالي الزيارات (2023-2025)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#10b981;--c2:#06d6a0;">
+          <span class="kpi-trend trend-up">94.8%</span>
+          <div class="kpi-icon">🩺</div>
+          <div class="kpi-value">5,382,949</div>
+          <div class="kpi-label" data-ar="زيارات العيادات الخارجية (OPD)" data-en="OPD Visits">زيارات العيادات الخارجية (OPD)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#f59e0b;--c2:#ef4444;">
+          <span class="kpi-trend trend-dn">5.1%</span>
+          <div class="kpi-icon">🚨</div>
+          <div class="kpi-value">290,729</div>
+          <div class="kpi-label" data-ar="حالات الطوارئ (ANE)" data-en="Emergency Cases (ANE)">حالات الطوارئ (ANE)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#7c3aed;--c2:#a855f7;">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-value">6,414</div>
+          <div class="kpi-label" data-ar="زيارات المجتمع (COMMUNITY)" data-en="Community Visits">زيارات المجتمع (COMMUNITY)</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card" style="--c1:#00d4ff;--c2:#0ea5e9;">
+          <div class="kpi-icon">🌅</div>
+          <div class="kpi-value">3,015,949</div>
+          <div class="kpi-label" data-ar="الشفت الصباحي (53.1%)" data-en="Morning Shift (53.1%)">الشفت الصباحي (53.1%)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#f59e0b;--c2:#fbbf24;">
+          <div class="kpi-icon">🌆</div>
+          <div class="kpi-value">1,811,381</div>
+          <div class="kpi-label" data-ar="الشفت المسائي (31.9%)" data-en="Afternoon Shift (31.9%)">الشفت المسائي (31.9%)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#7c3aed;--c2:#6366f1;">
+          <div class="kpi-icon">🌙</div>
+          <div class="kpi-value">852,762</div>
+          <div class="kpi-label" data-ar="الشفت الليلي (15.0%)" data-en="Night Shift (15.0%)">الشفت الليلي (15.0%)</div>
+        </div>
+        <div class="kpi-card" style="--c1:#10b981;--c2:#059669;">
+          <div class="kpi-icon">📋</div>
+          <div class="kpi-value">4,699,520</div>
+          <div class="kpi-label" data-ar="أيام العمل الرسمية (82.7%)" data-en="Working Days (82.7%)">أيام العمل الرسمية (82.7%)</div>
+        </div>
+      </div>
+
+      <div class="insight-grid">
+        <div class="insight-card">
+          <div class="insight-icon">🏆</div>
+          <div>
+            <div class="insight-title" data-ar="الأعلى تردداً: صلالة" data-en="Highest: Salalah">الأعلى تردداً: صلالة</div>
+            <div class="insight-text" data-ar="تستحوذ ولاية صلالة على 64.5% من إجمالي الزيارات بـ 3,665,060 زيارة، وتضم أكبر مؤسسة صحية وهي مستشفى السلطان قابوس" data-en="Salalah accounts for 64.5% of total visits with 3,665,060 visits, hosting the largest facility Sultan Qaboos Hospital">تستحوذ ولاية صلالة على 64.5% من إجمالي الزيارات بـ 3,665,060 زيارة، وتضم أكبر مؤسسة صحية وهي مستشفى السلطان قابوس</div>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">📈</div>
+          <div>
+            <div class="insight-title" data-ar="أكتوبر: أعلى شهراً" data-en="October: Peak Month">أكتوبر: أعلى شهراً</div>
+            <div class="insight-text" data-ar="يسجل شهر أكتوبر أعلى معدل تردد بـ 569,649 زيارة، بينما يُعد يونيو الأدنى بـ 382,184 زيارة" data-en="October records the highest visits at 569,649, while June is the lowest at 382,184 visits">يسجل شهر أكتوبر أعلى معدل تردد بـ 569,649 زيارة، بينما يُعد يونيو الأدنى بـ 382,184 زيارة</div>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">🏗️</div>
+          <div>
+            <div class="insight-title" data-ar="أكبر مؤسسة صحية" data-en="Largest Facility">أكبر مؤسسة صحية</div>
+            <div class="insight-text" data-ar="مستشفى السلطان قابوس يتصدر بـ 1,350,490 زيارة يمثل 23.8% من إجمالي الزيارات في المحافظة" data-en="Sultan Qaboos Hospital leads with 1,350,490 visits representing 23.8% of total visits in the governorate">مستشفى السلطان قابوس يتصدر بـ 1,350,490 زيارة يمثل 23.8% من إجمالي الزيارات في المحافظة</div>
+          </div>
+        </div>
+        <div class="insight-card">
+          <div class="insight-icon">⚡</div>
+          <div>
+            <div class="insight-title" data-ar="الشفت الصباحي الأكثر حركة" data-en="Morning Shift Most Active">الشفت الصباحي الأكثر حركة</div>
+            <div class="insight-text" data-ar="يستوعب الشفت الصباحي أكثر من نصف الزيارات بنسبة 53.1%، فيما يخدم الشفت الليلي 15% فقط من المترددين" data-en="Morning shift handles over half of all visits at 53.1%, while night shift serves only 15% of patients">يستوعب الشفت الصباحي أكثر من نصف الزيارات بنسبة 53.1%، فيما يخدم الشفت الليلي 15% فقط من المترددين</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="توزيع الزيارات حسب الولاية" data-en="Visits by Wilayat">توزيع الزيارات حسب الولاية</div>
+          <div class="chart-subtitle" data-ar="إجمالي الفترة 2023-2025" data-en="Total 2023-2025">إجمالي الفترة 2023-2025</div>
+          <div class="chart-wrap"><canvas id="c-wilayat-pie"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="الاتجاه السنوي للزيارات" data-en="Annual Visit Trend">الاتجاه السنوي للزيارات</div>
+          <div class="chart-subtitle" data-ar="مقارنة بين السنوات" data-en="Year comparison">مقارنة بين السنوات</div>
+          <div class="chart-wrap"><canvas id="c-yearly-bar"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-grid-3">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="أنواع الزيارات" data-en="Visit Types">أنواع الزيارات</div>
+          <div class="chart-wrap short"><canvas id="c-enc-donut"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="توزيع الشفتات" data-en="Shift Distribution">توزيع الشفتات</div>
+          <div class="chart-wrap short"><canvas id="c-shift-donut"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="أيام العمل مقابل الإجازات" data-en="Working Days vs Holidays">أيام العمل مقابل الإجازات</div>
+          <div class="chart-wrap short"><canvas id="c-holiday-donut"></canvas></div>
+        </div>
+      </div>
+
+      <div class="chart-card full">
+        <div class="chart-title" data-ar="الزيارات الشهرية عبر السنوات" data-en="Monthly Visits Across Years">الزيارات الشهرية عبر السنوات</div>
+        <div class="chart-subtitle" data-ar="مقارنة الأداء الشهري 2023-2024-2025" data-en="Monthly performance comparison 2023-2024-2025">مقارنة الأداء الشهري 2023-2024-2025</div>
+        <div class="chart-wrap tall"><canvas id="c-monthly-line"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: WILAYAT -->
+  <div id="page-wilayat" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">🗺️ <span data-ar="المؤشرات بالولايات" data-en="Indicators by Wilayat">المؤشرات بالولايات</span></div>
+          <div class="page-subtitle" data-ar="تحليل الزيارات حسب ولايات محافظة ظفار" data-en="Visit analysis by Dhofar Governorate Wilayats">تحليل الزيارات حسب ولايات محافظة ظفار</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-wilayat" onchange="updateWilayatPage()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-wil-year" onchange="updateWilayatPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All Years">جميع السنوات</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="kpi-grid" id="wil-kpis"></div>
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="مقارنة الولايات" data-en="Wilayat Comparison">مقارنة الولايات</div>
+          <div class="chart-wrap tall"><canvas id="c-wil-bar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="أنواع الزيارات لكل ولاية" data-en="Visit Types by Wilayat">أنواع الزيارات لكل ولاية</div>
+          <div class="chart-wrap tall"><canvas id="c-wil-enc-stacked"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-ar="تطور الزيارات عبر السنوات" data-en="Visit Trend Over Years">تطور الزيارات عبر السنوات</div>
+        <div class="chart-wrap"><canvas id="c-wil-years"></canvas></div>
+      </div>
+      <div class="chart-card" style="margin-top:16px;">
+        <div class="chart-title" data-ar="ترتيب الولايات" data-en="Wilayat Ranking">ترتيب الولايات</div>
+        <div id="wil-progress-list" class="progress-list" style="padding-top:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 3: ESTABLISHMENTS -->
+  <div id="page-estab" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">🏨 <span data-ar="المؤسسات الصحية" data-en="Health Facilities">المؤسسات الصحية</span></div>
+          <div class="page-subtitle" data-ar="44 مؤسسة صحية في محافظة ظفار" data-en="44 Health Facilities in Dhofar Governorate">44 مؤسسة صحية في محافظة ظفار</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-estab-wil" onchange="updateEstabPage()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-estab-year" onchange="updateEstabPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All Years">جميع السنوات</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الشهر:" data-en="Month:">الشهر:</span>
+          <select class="filter-select" id="f-estab-month" onchange="updateEstabPage()">
+            <option value="ALL" data-ar="جميع الأشهر" data-en="All Months">جميع الأشهر</option>
+            <option value="1">يناير</option><option value="2">فبراير</option><option value="3">مارس</option>
+            <option value="4">أبريل</option><option value="5">مايو</option><option value="6">يونيو</option>
+            <option value="7">يوليو</option><option value="8">أغسطس</option><option value="9">سبتمبر</option>
+            <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12">ديسمبر</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="chart-grid-2">
+        <div class="chart-card span2">
+          <div class="chart-title" data-ar="أعلى 15 مؤسسة صحية تردداً" data-en="Top 15 Health Facilities by Visits">أعلى 15 مؤسسة صحية تردداً</div>
+          <div class="chart-wrap tall"><canvas id="c-estab-bar"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card" style="margin-bottom:16px;">
+        <div class="chart-title" data-ar="ترتيب المؤسسات" data-en="Facility Ranking">ترتيب المؤسسات</div>
+        <div id="estab-progress-list" class="progress-list" style="padding-top:8px;max-height:400px;overflow-y:auto;"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-ar="قائمة المؤسسات التفصيلية" data-en="Detailed Facility List">قائمة المؤسسات التفصيلية</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="estab-table"></table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 4: VISIT TYPES -->
+  <div id="page-visit" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">🩺 <span data-ar="أنواع الزيارة" data-en="Visit Types">أنواع الزيارة</span></div>
+          <div class="page-subtitle" data-ar="العيادات الخارجية • الطوارئ • المجتمعية" data-en="OPD • Emergency • Community">العيادات الخارجية • الطوارئ • المجتمعية</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-enc-wil" onchange="onEncWilChange()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="المؤسسة:" data-en="Facility:">المؤسسة:</span>
+          <select class="filter-select" id="f-enc-estab" onchange="updateVisitPage()">
+            <option value="ALL" data-ar="جميع المؤسسات" data-en="All Facilities">جميع المؤسسات</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-enc-year" onchange="updateVisitPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All Years">جميع السنوات</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الشهر:" data-en="Month:">الشهر:</span>
+          <select class="filter-select" id="f-enc-month" onchange="updateVisitPage()">
+            <option value="ALL" data-ar="جميع الأشهر" data-en="All Months">جميع الأشهر</option>
+            <option value="1">يناير</option><option value="2">فبراير</option><option value="3">مارس</option>
+            <option value="4">أبريل</option><option value="5">مايو</option><option value="6">يونيو</option>
+            <option value="7">يوليو</option><option value="8">أغسطس</option><option value="9">سبتمبر</option>
+            <option value="10">أكتوبر</option><option value="11">نوفمبر</option><option value="12">ديسمبر</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="نوع الزيارة:" data-en="Visit Type:">نوع الزيارة:</span>
+          <select class="filter-select" id="f-enc" onchange="updateVisitPage()">
+            <option value="ALL" data-ar="جميع الأنواع" data-en="All Types">جميع الأنواع</option>
+            <option value="OPD" data-ar="عيادات خارجية" data-en="OPD">عيادات خارجية (OPD)</option>
+            <option value="ANE" data-ar="طوارئ" data-en="Emergency">طوارئ (ANE)</option>
+            <option value="COMMUNITY" data-ar="مجتمعية" data-en="Community">مجتمعية</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="kpi-grid" id="visit-kpis"></div>
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="مقارنة أنواع الزيارة" data-en="Visit Type Comparison">مقارنة أنواع الزيارة</div>
+          <div class="chart-wrap"><canvas id="c-enc-bar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="نسب أنواع الزيارة" data-en="Visit Type Ratios">نسب أنواع الزيارة</div>
+          <div class="chart-wrap"><canvas id="c-enc-pie"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-ar="أنواع الزيارة حسب الولاية" data-en="Visit Types by Wilayat">أنواع الزيارة حسب الولاية</div>
+        <div class="chart-wrap tall"><canvas id="c-enc-wil"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 5: YEAR -->
+  <div id="page-year" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">📅 <span data-ar="حسب السنوات" data-en="By Year">حسب السنوات</span></div>
+          <div class="page-subtitle" data-ar="تحليل الأداء للسنوات 2023 و2024 و2025" data-en="Performance analysis for 2023, 2024, and 2025">تحليل الأداء للسنوات 2023 و2024 و2025</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-year-wil" onchange="onYearWilChange()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="المؤسسة:" data-en="Facility:">المؤسسة:</span>
+          <select class="filter-select" id="f-year-estab" onchange="updateYearPage()">
+            <option value="ALL" data-ar="جميع المؤسسات" data-en="All Facilities">جميع المؤسسات</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-year" onchange="updateYearPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All Years">جميع السنوات</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="kpi-grid" id="year-kpis"></div>
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="مقارنة الزيارات السنوية" data-en="Annual Visits Comparison">مقارنة الزيارات السنوية</div>
+          <div class="chart-wrap"><canvas id="c-year-comp"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="توزيع الزيارات السنوية" data-en="Annual Visit Distribution">توزيع الزيارات السنوية</div>
+          <div class="chart-wrap"><canvas id="c-year-pie"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-ar="الأداء الشهري لكل سنة" data-en="Monthly Performance Per Year">الأداء الشهري لكل سنة</div>
+        <div class="chart-wrap tall"><canvas id="c-year-monthly"></canvas></div>
+      </div>
+      <div class="chart-card" style="margin-top:16px;">
+        <div class="chart-title" data-ar="مقارنة الولايات حسب السنة" data-en="Wilayat Comparison by Year">مقارنة الولايات حسب السنة</div>
+        <div class="chart-wrap tall"><canvas id="c-year-wil"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 6: MONTH -->
+  <div id="page-month" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">🗓️ <span data-ar="حسب الأشهر" data-en="By Month">حسب الأشهر</span></div>
+          <div class="page-subtitle" data-ar="تحليل موسمية الزيارات على مدار العام" data-en="Seasonal analysis of visits throughout the year">تحليل موسمية الزيارات على مدار العام</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-month-wil" onchange="onMonthWilChange()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="المؤسسة:" data-en="Facility:">المؤسسة:</span>
+          <select class="filter-select" id="f-month-estab" onchange="updateMonthPage()">
+            <option value="ALL" data-ar="جميع المؤسسات" data-en="All Facilities">جميع المؤسسات</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الشهر:" data-en="Month:">الشهر:</span>
+          <select class="filter-select" id="f-month" onchange="updateMonthPage()">
+            <option value="ALL" data-ar="جميع الأشهر" data-en="All Months">جميع الأشهر</option>
+            <option value="1" data-ar="يناير" data-en="January">يناير</option>
+            <option value="2" data-ar="فبراير" data-en="February">فبراير</option>
+            <option value="3" data-ar="مارس" data-en="March">مارس</option>
+            <option value="4" data-ar="أبريل" data-en="April">أبريل</option>
+            <option value="5" data-ar="مايو" data-en="May">مايو</option>
+            <option value="6" data-ar="يونيو" data-en="June">يونيو</option>
+            <option value="7" data-ar="يوليو" data-en="July">يوليو</option>
+            <option value="8" data-ar="أغسطس" data-en="August">أغسطس</option>
+            <option value="9" data-ar="سبتمبر" data-en="September">سبتمبر</option>
+            <option value="10" data-ar="أكتوبر" data-en="October">أكتوبر</option>
+            <option value="11" data-ar="نوفمبر" data-en="November">نوفمبر</option>
+            <option value="12" data-ar="ديسمبر" data-en="December">ديسمبر</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-month-year" onchange="updateMonthPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All">الكل</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="kpi-grid" id="month-kpis"></div>
+      <div class="chart-card" style="margin-bottom:16px;">
+        <div class="chart-title" data-ar="الزيارات الشهرية - الإجمالي" data-en="Monthly Visits - Total">الزيارات الشهرية - الإجمالي</div>
+        <div class="chart-wrap tall"><canvas id="c-month-bar"></canvas></div>
+      </div>
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="موسمية الزيارات" data-en="Visit Seasonality">موسمية الزيارات</div>
+          <div class="chart-wrap"><canvas id="c-month-radar"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="مقارنة شهرية بين السنوات" data-en="Monthly Year Comparison">مقارنة شهرية بين السنوات</div>
+          <div class="chart-wrap"><canvas id="c-month-line"></canvas></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE 7: WORKDAY -->
+  <div id="page-workday" class="page-content">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="page-title-group">
+          <div class="page-title">⚙️ <span data-ar="أيام العمل والشفتات" data-en="Work Days & Shifts">أيام العمل والشفتات</span></div>
+          <div class="page-subtitle" data-ar="تحليل التوزيع حسب أيام العمل والشفتات الصباحية والمسائية والليلية" data-en="Distribution by working days, morning, afternoon and night shifts">تحليل التوزيع حسب أيام العمل والشفتات الصباحية والمسائية والليلية</div>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الولاية:" data-en="Wilayat:">الولاية:</span>
+          <select class="filter-select" id="f-wd-wil" onchange="onWdWilChange()">
+            <option value="ALL" data-ar="جميع الولايات" data-en="All Wilayats">جميع الولايات</option>
+            <option value="SALALAH">صلالة</option>
+            <option value="TAQAH">طاقة</option>
+            <option value="MIRBAT">مرباط</option>
+            <option value="AL MAZYUNAH">المزيونة</option>
+            <option value="THUMRAYT">ثمريت</option>
+            <option value="SHALIM WA JUZUR AL HALLANIYAT">شليم وجزر الحلانيات</option>
+            <option value="SADAH">سدح</option>
+            <option value="RAKHYUT">رخيوت</option>
+            <option value="DALKUT">دلكوت</option>
+            <option value="MAQSHIN">مقشن</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="المؤسسة:" data-en="Facility:">المؤسسة:</span>
+          <select class="filter-select" id="f-wd-estab" onchange="updateWorkdayPage()">
+            <option value="ALL" data-ar="جميع المؤسسات" data-en="All Facilities">جميع المؤسسات</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="السنة:" data-en="Year:">السنة:</span>
+          <select class="filter-select" id="f-wd-year" onchange="updateWorkdayPage()">
+            <option value="ALL" data-ar="جميع السنوات" data-en="All Years">جميع السنوات</option>
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="نوع اليوم:" data-en="Day Type:">نوع اليوم:</span>
+          <select class="filter-select" id="f-daytype" onchange="updateWorkdayPage()">
+            <option value="ALL" data-ar="الكل" data-en="All">الكل</option>
+            <option value="WORKING DAY" data-ar="يوم عمل" data-en="Working Day">يوم عمل</option>
+            <option value="HOLIDAY" data-ar="إجازة" data-en="Holiday">إجازة</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <span class="filter-label" data-ar="الشفت:" data-en="Shift:">الشفت:</span>
+          <select class="filter-select" id="f-shift" onchange="updateWorkdayPage()">
+            <option value="ALL" data-ar="جميع الشفتات" data-en="All Shifts">جميع الشفتات</option>
+            <option value="1ST SHIFT (MORNING)" data-ar="الصباحي" data-en="Morning">الصباحي</option>
+            <option value="2nd SHIFT (AFTERNOON)" data-ar="المسائي" data-en="Afternoon">المسائي</option>
+            <option value="3RD SHIFT (NIGHT)" data-ar="الليلي" data-en="Night">الليلي</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div style="padding: 0 28px 28px;">
+      <div class="kpi-grid" id="wd-kpis"></div>
+      <div class="chart-grid-2">
+        <div class="chart-card">
+          <div class="chart-title" data-ar="توزيع الشفتات" data-en="Shift Distribution">توزيع الشفتات</div>
+          <div class="chart-wrap"><canvas id="c-wd-shift"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title" data-ar="أيام العمل مقابل الإجازات" data-en="Working Days vs Holidays">أيام العمل مقابل الإجازات</div>
+          <div class="chart-wrap"><canvas id="c-wd-holiday"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title" data-ar="الشفتات حسب الولاية" data-en="Shifts by Wilayat">الشفتات حسب الولاية</div>
+        <div class="chart-wrap tall"><canvas id="c-wd-wil-shift"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ============================
+// DATA (from real CSV aggregation)
+// ============================
+const DATA = {
+  total:5680092,
+  by_wilayat:{"SALALAH":3665060,"AL MAZYUNAH":388196,"TAQAH":447274,"MIRBAT":330150,"THUMRAYT":267594,"RAKHYUT":113350,"SADAH":158506,"SHALIM WA JUZUR AL HALLANIYAT":191844,"DALKUT":95428,"MAQSHIN":22690},
+  by_year:{"2023":1918747,"2024":1878414,"2025":1882931},
+  by_month:{"1":434536,"2":419460,"3":468687,"4":459327,"5":496745,"6":382184,"7":444603,"8":487780,"9":527952,"10":569649,"11":497771,"12":491398},
+  by_enc:{"OPD":5382949,"ANE":290729,"COMMUNITY":6414},
+  by_shift:{"1ST SHIFT (MORNING)":3015949,"2nd SHIFT (AFTERNOON)":1811381,"3RD SHIFT (NIGHT)":852762},
+  by_holiday:{"WORKING DAY":4699520,"HOLIDAY":980572},
+  by_wil_year:{"SALALAH":{"2023":1252530,"2024":1215273,"2025":1197257},"AL MAZYUNAH":{"2023":129985,"2024":124434,"2025":133777},"TAQAH":{"2023":153351,"2024":144832,"2025":149091},"MIRBAT":{"2025":114139,"2023":107270,"2024":108741},"THUMRAYT":{"2024":94169,"2025":87865,"2023":85560},"RAKHYUT":{"2024":37650,"2023":35301,"2025":40399},"SADAH":{"2024":53034,"2023":51048,"2025":54424},"SHALIM WA JUZUR AL HALLANIYAT":{"2025":65177,"2023":63470,"2024":63197},"DALKUT":{"2025":33340,"2024":30839,"2023":31249},"MAQSHIN":{"2025":7462,"2023":8983,"2024":6245}},
+  by_wil_enc:{"SALALAH":{"OPD":3386823,"ANE":274271,"COMMUNITY":3966},"AL MAZYUNAH":{"OPD":383212,"ANE":4770,"COMMUNITY":214},"TAQAH":{"OPD":444619,"COMMUNITY":1319,"ANE":1336},"MIRBAT":{"OPD":325812,"ANE":3985,"COMMUNITY":353},"THUMRAYT":{"OPD":265588,"ANE":1918,"COMMUNITY":88},"RAKHYUT":{"OPD":112771,"ANE":520,"COMMUNITY":59},"SADAH":{"OPD":155597,"ANE":2667,"COMMUNITY":242},"SHALIM WA JUZUR AL HALLANIYAT":{"OPD":191035,"ANE":743,"COMMUNITY":66},"DALKUT":{"OPD":95007,"COMMUNITY":89,"ANE":332},"MAQSHIN":{"OPD":22485,"ANE":187,"COMMUNITY":18}},
+  by_wil_shift:{"SALALAH":{"1ST SHIFT (MORNING)":2062179,"2nd SHIFT (AFTERNOON)":1030740,"3RD SHIFT (NIGHT)":572141},"AL MAZYUNAH":{"1ST SHIFT (MORNING)":182611,"2nd SHIFT (AFTERNOON)":151575,"3RD SHIFT (NIGHT)":54010},"TAQAH":{"2nd SHIFT (AFTERNOON)":160227,"1ST SHIFT (MORNING)":214005,"3RD SHIFT (NIGHT)":73042},"MIRBAT":{"2nd SHIFT (AFTERNOON)":126523,"1ST SHIFT (MORNING)":148515,"3RD SHIFT (NIGHT)":55112},"THUMRAYT":{"1ST SHIFT (MORNING)":124379,"2nd SHIFT (AFTERNOON)":106486,"3RD SHIFT (NIGHT)":36729},"RAKHYUT":{"1ST SHIFT (MORNING)":63431,"2nd SHIFT (AFTERNOON)":42404,"3RD SHIFT (NIGHT)":7515},"SADAH":{"1ST SHIFT (MORNING)":74348,"2nd SHIFT (AFTERNOON)":65008,"3RD SHIFT (NIGHT)":19150},"SHALIM WA JUZUR AL HALLANIYAT":{"1ST SHIFT (MORNING)":85086,"2nd SHIFT (AFTERNOON)":85678,"3RD SHIFT (NIGHT)":21080},"DALKUT":{"1ST SHIFT (MORNING)":44139,"2nd SHIFT (AFTERNOON)":38021,"3RD SHIFT (NIGHT)":13268},"MAQSHIN":{"1ST SHIFT (MORNING)":17256,"2nd SHIFT (AFTERNOON)":4719,"3RD SHIFT (NIGHT)":715}},
+  by_wil_holiday:{"SALALAH":{"WORKING DAY":3107049,"HOLIDAY":558011},"AL MAZYUNAH":{"WORKING DAY":313619,"HOLIDAY":74577},"TAQAH":{"WORKING DAY":354504,"HOLIDAY":92770},"MIRBAT":{"WORKING DAY":257062,"HOLIDAY":73088},"THUMRAYT":{"WORKING DAY":212800,"HOLIDAY":54794},"RAKHYUT":{"WORKING DAY":89250,"HOLIDAY":24100},"SADAH":{"WORKING DAY":127191,"HOLIDAY":31315},"SHALIM WA JUZUR AL HALLANIYAT":{"WORKING DAY":145792,"HOLIDAY":46052},"DALKUT":{"WORKING DAY":71926,"HOLIDAY":23502},"MAQSHIN":{"WORKING DAY":20327,"HOLIDAY":2363}},
+  by_wil_estab:{"SALALAH":{"AS SAADAH HEALTH CENTER":762098,"SALALAH AL GHARBIA HEALTH CENTER":518396,"AWQAD HEALTH CENTER":505540,"AS SULTAN QABOOS HOSPITAL":1350490,"SALALAH AL JADIDAH HEALTH CENTER":212542,"AL DAHAREEZ HEALTH CENTER":204615,"QAYRUN HAYRITI HEALTH CENTER":70435,"TITAM HEALTH CENTER":32813,"HEJAYF HEALTH CENTER":8131},"AL MAZYUNAH":{"AL MAZYUNAH HOSPITAL":279410,"HARWIB HEALTH CENTER":30688,"ANDAT HEALTH CENTER":32361,"MITN HEALTH CENTER":22640,"TOSINAT HEALTH CENTER":10889,"MATOURA & JIJWAL HEALTH CENTER":12208},"TAQAH":{"TAQAH HOSPITAL":275308,"MADINAT AL HAQQ HOSPITAL":136860,"JIBJAT HEALTH CENTER":35106},"MIRBAT":{"MIRBAT HOSPITAL":236884,"TAWI ATAYR HOSPITAL":93266},"THUMRAYT":{"THUMRAYT HOSPITAL":194593,"MUDAYY HEALTH CENTER":30128,"DHAHBUN HEALTH CENTER":17054,"AYBOT HEALTH CENTER":14205,"BARR BAZOOM HEALTH CENTER":4363,"BITHNAH HEALTH CENTER":3994,"AL HASHMAN HEALTH CENTER":3257},"RAKHYUT":{"SHAHB ASAYB HEALTH CENTER":92361,"RAKHYUT HOSPITAL":20989},"SADAH":{"SADAH HOSPITAL":80074,"HASIK HEALTH CENTER":36339,"HADBIN HEALTH CENTER":28214,"SAWB HEALTH CENTER":13879},"SHALIM WA JUZUR AL HALLANIYAT":{"SHALIM HOSPITAL":82214,"ASH SHUWAYMIYAH HEALTH CENTER":33893,"KUBUT HEALTH CENTER":27588,"SHARBTHAT HEALTH CENTER":18025,"DIMIT HEALTH CENTER":21714,"AL HALLANIYAT HEALTH CENTER":8410},"DALKUT":{"DALKUT HEALTH CENTER":59290,"KHADRAFI HEALTH CENTER":28108,"SARFET HEALTH CENTER":8030},"MAQSHIN":{"MUQSHIN HOSPITAL":19184,"AL MASHASH HEALTH CENTER":3506}},
+  by_estab_year:{"AS SAADAH HEALTH CENTER":{"2023":274931,"2024":251151,"2025":236016},"SALALAH AL GHARBIA HEALTH CENTER":{"2024":175359,"2025":140456,"2023":202581},"AWQAD HEALTH CENTER":{"2023":194613,"2024":166583,"2025":144344},"AS SULTAN QABOOS HOSPITAL":{"2024":444232,"2025":499463,"2023":406795},"SALALAH AL JADIDAH HEALTH CENTER":{"2023":70616,"2024":71251,"2025":70675},"AL DAHAREEZ HEALTH CENTER":{"2025":69286,"2024":70491,"2023":64838},"AL MAZYUNAH HOSPITAL":{"2023":86002,"2024":91811,"2025":101597},"TAQAH HOSPITAL":{"2023":93136,"2024":89337,"2025":92835},"MIRBAT HOSPITAL":{"2025":83637,"2023":75492,"2024":77755},"THUMRAYT HOSPITAL":{"2024":66754,"2025":59405,"2023":68434},"MADINAT AL HAQQ HOSPITAL":{"2023":48220,"2024":44074,"2025":44566},"SHAHB ASAYB HEALTH CENTER":{"2024":31503,"2023":27878,"2025":32980},"QAYRUN HAYRITI HEALTH CENTER":{"2023":23605,"2025":23960,"2024":22870},"TAWI ATAYR HOSPITAL":{"2023":31778,"2024":30986,"2025":30502},"SADAH HOSPITAL":{"2024":26799,"2023":24868,"2025":28407},"SHALIM HOSPITAL":{"2025":28769,"2023":26700,"2024":26745},"TITAM HEALTH CENTER":{"2024":10619,"2023":11711,"2025":10483},"DALKUT HEALTH CENTER":{"2025":20237,"2024":19513,"2023":19540},"ASH SHUWAYMIYAH HEALTH CENTER":{"2023":12508,"2024":10820,"2025":10565},"HARWIB HEALTH CENTER":{"2023":15229,"2025":7205,"2024":8254},"ANDAT HEALTH CENTER":{"2023":12580,"2024":10239,"2025":9542},"MUQSHIN HOSPITAL":{"2025":6682,"2023":7573,"2024":4929},"MUDAYY HEALTH CENTER":{"2024":9993,"2023":9909,"2025":10226},"JIBJAT HEALTH CENTER":{"2023":11995,"2025":11690,"2024":11421},"HASIK HEALTH CENTER":{"2023":12422,"2025":12003,"2024":11914},"HADBIN HEALTH CENTER":{"2024":10065,"2025":9585,"2023":8564},"KHADRAFI HEALTH CENTER":{"2025":10096,"2023":9391,"2024":8621},"RAKHYUT HOSPITAL":{"2025":7419,"2024":6147,"2023":7423},"MITN HEALTH CENTER":{"2023":7775,"2025":7994,"2024":6871},"HEJAYF HEALTH CENTER":{"2024":2717,"2023":2840,"2025":2574},"KUBUT HEALTH CENTER":{"2025":8779,"2024":9345,"2023":9464},"SHARBTHAT HEALTH CENTER":{"2023":6739,"2025":5636,"2024":5650},"DHAHBUN HEALTH CENTER":{"2025":6885,"2023":3403,"2024":6766},"SARFET HEALTH CENTER":{"2025":3007,"2024":2705,"2023":2318},"DIMIT HEALTH CENTER":{"2023":7800,"2025":7353,"2024":6561},"AYBOT HEALTH CENTER":{"2025":6285,"2024":6216,"2023":1704},"SAWB HEALTH CENTER":{"2023":5194,"2025":4429,"2024":4256},"BARR BAZOOM HEALTH CENTER":{"2025":2460,"2024":1903},"TOSINAT HEALTH CENTER":{"2025":3504,"2024":3582,"2023":3803},"AL HALLANIYAT HEALTH CENTER":{"2025":4075,"2024":4076,"2023":259},"MATOURA & JIJWAL HEALTH CENTER":{"2025":3935,"2023":4596,"2024":3677},"AL MASHASH HEALTH CENTER":{"2023":1410,"2024":1316,"2025":780},"BITHNAH HEALTH CENTER":{"2025":1357,"2024":1436,"2023":1201},"AL HASHMAN HEALTH CENTER":{"2025":1247,"2024":1101,"2023":909}},
+  by_estab_enc:{"AS SAADAH HEALTH CENTER":{"OPD":759809,"COMMUNITY":886,"ANE":1403},"SALALAH AL GHARBIA HEALTH CENTER":{"OPD":517980,"COMMUNITY":413,"ANE":3},"AWQAD HEALTH CENTER":{"OPD":503813,"COMMUNITY":1706,"ANE":21},"AS SULTAN QABOOS HOSPITAL":{"OPD":1077854,"ANE":272636},"SALALAH AL JADIDAH HEALTH CENTER":{"OPD":211945,"COMMUNITY":505,"ANE":92},"AL DAHAREEZ HEALTH CENTER":{"OPD":204161,"COMMUNITY":422,"ANE":32},"AL MAZYUNAH HOSPITAL":{"OPD":274623,"ANE":4679,"COMMUNITY":108},"TAQAH HOSPITAL":{"OPD":273029,"COMMUNITY":1193,"ANE":1086},"MIRBAT HOSPITAL":{"OPD":235590,"COMMUNITY":340,"ANE":954},"THUMRAYT HOSPITAL":{"OPD":192709,"ANE":1868,"COMMUNITY":16},"MADINAT AL HAQQ HOSPITAL":{"OPD":136548,"COMMUNITY":88,"ANE":224},"SHAHB ASAYB HEALTH CENTER":{"OPD":91803,"ANE":507,"COMMUNITY":51},"QAYRUN HAYRITI HEALTH CENTER":{"OPD":70368,"ANE":67},"TAWI ATAYR HOSPITAL":{"OPD":90222,"ANE":3031,"COMMUNITY":13},"SADAH HOSPITAL":{"OPD":77320,"ANE":2608,"COMMUNITY":146},"SHALIM HOSPITAL":{"OPD":81569,"ANE":619,"COMMUNITY":26},"TITAM HEALTH CENTER":{"OPD":32763,"COMMUNITY":33,"ANE":17},"DALKUT HEALTH CENTER":{"OPD":59026,"ANE":228,"COMMUNITY":36},"ASH SHUWAYMIYAH HEALTH CENTER":{"OPD":33850,"COMMUNITY":9,"ANE":34},"HARWIB HEALTH CENTER":{"OPD":30643,"ANE":45},"ANDAT HEALTH CENTER":{"OPD":32282,"COMMUNITY":65,"ANE":14},"MUQSHIN HOSPITAL":{"OPD":18989,"ANE":187,"COMMUNITY":8},"MUDAYY HEALTH CENTER":{"OPD":30064,"ANE":46,"COMMUNITY":18},"JIBJAT HEALTH CENTER":{"OPD":35042,"COMMUNITY":38,"ANE":26},"HASIK HEALTH CENTER":{"OPD":36278,"COMMUNITY":41,"ANE":20},"HADBIN HEALTH CENTER":{"OPD":28132,"COMMUNITY":55,"ANE":27},"KHADRAFI HEALTH CENTER":{"OPD":27997,"COMMUNITY":38,"ANE":73},"RAKHYUT HOSPITAL":{"OPD":20968,"COMMUNITY":8,"ANE":13},"MITN HEALTH CENTER":{"OPD":22607,"ANE":32,"COMMUNITY":1},"HEJAYF HEALTH CENTER":{"OPD":8130,"COMMUNITY":1},"KUBUT HEALTH CENTER":{"OPD":27576,"ANE":10,"COMMUNITY":2},"SHARBTHAT HEALTH CENTER":{"OPD":17967,"ANE":53,"COMMUNITY":5},"DHAHBUN HEALTH CENTER":{"OPD":17046,"COMMUNITY":4,"ANE":4},"SARFET HEALTH CENTER":{"OPD":7984,"ANE":31,"COMMUNITY":15},"DIMIT HEALTH CENTER":{"OPD":21681,"ANE":15,"COMMUNITY":18},"AYBOT HEALTH CENTER":{"OPD":14171,"COMMUNITY":34},"SAWB HEALTH CENTER":{"OPD":13867,"ANE":12},"BARR BAZOOM HEALTH CENTER":{"OPD":4363},"TOSINAT HEALTH CENTER":{"OPD":10859,"COMMUNITY":30},"AL HALLANIYAT HEALTH CENTER":{"OPD":8392,"ANE":12,"COMMUNITY":6},"MATOURA & JIJWAL HEALTH CENTER":{"OPD":12198,"COMMUNITY":10},"AL MASHASH HEALTH CENTER":{"OPD":3496,"COMMUNITY":10},"BITHNAH HEALTH CENTER":{"OPD":3981,"COMMUNITY":13},"AL HASHMAN HEALTH CENTER":{"OPD":3254,"COMMUNITY":3}},
+  by_estab_shift:{"AS SAADAH HEALTH CENTER":{"1ST SHIFT (MORNING)":279975,"2nd SHIFT (AFTERNOON)":283832,"3RD SHIFT (NIGHT)":198291},"SALALAH AL GHARBIA HEALTH CENTER":{"1ST SHIFT (MORNING)":230638,"2nd SHIFT (AFTERNOON)":198196,"3RD SHIFT (NIGHT)":89562},"AWQAD HEALTH CENTER":{"1ST SHIFT (MORNING)":227620,"2nd SHIFT (AFTERNOON)":211939,"3RD SHIFT (NIGHT)":65981},"AS SULTAN QABOOS HOSPITAL":{"3RD SHIFT (NIGHT)":212202,"2nd SHIFT (AFTERNOON)":166275,"1ST SHIFT (MORNING)":972013},"SALALAH AL JADIDAH HEALTH CENTER":{"1ST SHIFT (MORNING)":148305,"2nd SHIFT (AFTERNOON)":61454,"3RD SHIFT (NIGHT)":2783},"AL DAHAREEZ HEALTH CENTER":{"1ST SHIFT (MORNING)":141931,"2nd SHIFT (AFTERNOON)":59830,"3RD SHIFT (NIGHT)":2854},"AL MAZYUNAH HOSPITAL":{"1ST SHIFT (MORNING)":129279,"2nd SHIFT (AFTERNOON)":102505,"3RD SHIFT (NIGHT)":47626},"TAQAH HOSPITAL":{"2nd SHIFT (AFTERNOON)":98563,"1ST SHIFT (MORNING)":120290,"3RD SHIFT (NIGHT)":56455},"MIRBAT HOSPITAL":{"2nd SHIFT (AFTERNOON)":88499,"1ST SHIFT (MORNING)":103988,"3RD SHIFT (NIGHT)":44397},"THUMRAYT HOSPITAL":{"1ST SHIFT (MORNING)":91469,"2nd SHIFT (AFTERNOON)":69430,"3RD SHIFT (NIGHT)":33694},"MADINAT AL HAQQ HOSPITAL":{"1ST SHIFT (MORNING)":74854,"2nd SHIFT (AFTERNOON)":45770,"3RD SHIFT (NIGHT)":16236},"SHAHB ASAYB HEALTH CENTER":{"1ST SHIFT (MORNING)":50630,"2nd SHIFT (AFTERNOON)":36736,"3RD SHIFT (NIGHT)":4995},"QAYRUN HAYRITI HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":38272,"1ST SHIFT (MORNING)":31784,"3RD SHIFT (NIGHT)":379},"TAWI ATAYR HOSPITAL":{"1ST SHIFT (MORNING)":44527,"2nd SHIFT (AFTERNOON)":38024,"3RD SHIFT (NIGHT)":10715},"SADAH HOSPITAL":{"1ST SHIFT (MORNING)":38411,"2nd SHIFT (AFTERNOON)":27046,"3RD SHIFT (NIGHT)":14617},"SHALIM HOSPITAL":{"1ST SHIFT (MORNING)":35753,"2nd SHIFT (AFTERNOON)":30804,"3RD SHIFT (NIGHT)":15657},"TITAM HEALTH CENTER":{"1ST SHIFT (MORNING)":21782,"2nd SHIFT (AFTERNOON)":10942,"3RD SHIFT (NIGHT)":89},"DALKUT HEALTH CENTER":{"1ST SHIFT (MORNING)":22429,"2nd SHIFT (AFTERNOON)":24619,"3RD SHIFT (NIGHT)":12242},"ASH SHUWAYMIYAH HEALTH CENTER":{"1ST SHIFT (MORNING)":17261,"2nd SHIFT (AFTERNOON)":15298,"3RD SHIFT (NIGHT)":1334},"HARWIB HEALTH CENTER":{"1ST SHIFT (MORNING)":17903,"2nd SHIFT (AFTERNOON)":10832,"3RD SHIFT (NIGHT)":1953},"ANDAT HEALTH CENTER":{"1ST SHIFT (MORNING)":15366,"2nd SHIFT (AFTERNOON)":15672,"3RD SHIFT (NIGHT)":1323},"MUQSHIN HOSPITAL":{"1ST SHIFT (MORNING)":14933,"2nd SHIFT (AFTERNOON)":3733,"3RD SHIFT (NIGHT)":518},"MUDAYY HEALTH CENTER":{"1ST SHIFT (MORNING)":12775,"2nd SHIFT (AFTERNOON)":16028,"3RD SHIFT (NIGHT)":1325},"JIBJAT HEALTH CENTER":{"1ST SHIFT (MORNING)":18861,"2nd SHIFT (AFTERNOON)":15894,"3RD SHIFT (NIGHT)":351},"HASIK HEALTH CENTER":{"1ST SHIFT (MORNING)":15938,"2nd SHIFT (AFTERNOON)":17849,"3RD SHIFT (NIGHT)":2552},"HADBIN HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":13872,"1ST SHIFT (MORNING)":12953,"3RD SHIFT (NIGHT)":1389},"KHADRAFI HEALTH CENTER":{"1ST SHIFT (MORNING)":13911,"2nd SHIFT (AFTERNOON)":13171,"3RD SHIFT (NIGHT)":1026},"RAKHYUT HOSPITAL":{"1ST SHIFT (MORNING)":12801,"2nd SHIFT (AFTERNOON)":5668,"3RD SHIFT (NIGHT)":2520},"MITN HEALTH CENTER":{"1ST SHIFT (MORNING)":9886,"2nd SHIFT (AFTERNOON)":11377,"3RD SHIFT (NIGHT)":1377},"HEJAYF HEALTH CENTER":{"1ST SHIFT (MORNING)":8131},"KUBUT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":15606,"1ST SHIFT (MORNING)":11161,"3RD SHIFT (NIGHT)":821},"SHARBTHAT HEALTH CENTER":{"1ST SHIFT (MORNING)":8511,"2nd SHIFT (AFTERNOON)":8687,"3RD SHIFT (NIGHT)":827},"DHAHBUN HEALTH CENTER":{"1ST SHIFT (MORNING)":6883,"2nd SHIFT (AFTERNOON)":9650,"3RD SHIFT (NIGHT)":521},"SARFET HEALTH CENTER":{"1ST SHIFT (MORNING)":7799,"2nd SHIFT (AFTERNOON)":231},"DIMIT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":11498,"1ST SHIFT (MORNING)":8397,"3RD SHIFT (NIGHT)":1819},"AYBOT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":8695,"1ST SHIFT (MORNING)":4879,"3RD SHIFT (NIGHT)":631},"SAWB HEALTH CENTER":{"1ST SHIFT (MORNING)":7046,"2nd SHIFT (AFTERNOON)":6241,"3RD SHIFT (NIGHT)":592},"BARR BAZOOM HEALTH CENTER":{"1ST SHIFT (MORNING)":3989,"2nd SHIFT (AFTERNOON)":361,"3RD SHIFT (NIGHT)":13},"TOSINAT HEALTH CENTER":{"1ST SHIFT (MORNING)":5910,"2nd SHIFT (AFTERNOON)":4654,"3RD SHIFT (NIGHT)":325},"AL HALLANIYAT HEALTH CENTER":{"1ST SHIFT (MORNING)":4003,"2nd SHIFT (AFTERNOON)":3785,"3RD SHIFT (NIGHT)":622},"MATOURA & JIJWAL HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":6535,"1ST SHIFT (MORNING)":4267,"3RD SHIFT (NIGHT)":1406},"AL MASHASH HEALTH CENTER":{"1ST SHIFT (MORNING)":2323,"2nd SHIFT (AFTERNOON)":986,"3RD SHIFT (NIGHT)":197},"BITHNAH HEALTH CENTER":{"1ST SHIFT (MORNING)":2692,"2nd SHIFT (AFTERNOON)":1043,"3RD SHIFT (NIGHT)":259},"AL HASHMAN HEALTH CENTER":{"1ST SHIFT (MORNING)":1692,"2nd SHIFT (AFTERNOON)":1279,"3RD SHIFT (NIGHT)":286}},
+  by_estab_holiday:{"AS SAADAH HEALTH CENTER":{"WORKING DAY":587247,"HOLIDAY":174851},"SALALAH AL GHARBIA HEALTH CENTER":{"WORKING DAY":408733,"HOLIDAY":109663},"AWQAD HEALTH CENTER":{"WORKING DAY":408954,"HOLIDAY":96586},"AS SULTAN QABOOS HOSPITAL":{"WORKING DAY":1205979,"HOLIDAY":144511},"SALALAH AL JADIDAH HEALTH CENTER":{"WORKING DAY":201637,"HOLIDAY":10905},"AL DAHAREEZ HEALTH CENTER":{"WORKING DAY":192780,"HOLIDAY":11835},"AL MAZYUNAH HOSPITAL":{"WORKING DAY":221724,"HOLIDAY":57686},"TAQAH HOSPITAL":{"WORKING DAY":216877,"HOLIDAY":58431},"MIRBAT HOSPITAL":{"WORKING DAY":182850,"HOLIDAY":54034},"THUMRAYT HOSPITAL":{"WORKING DAY":155057,"HOLIDAY":39536},"MADINAT AL HAQQ HOSPITAL":{"WORKING DAY":110311,"HOLIDAY":26549},"SHAHB ASAYB HEALTH CENTER":{"WORKING DAY":72928,"HOLIDAY":19433},"QAYRUN HAYRITI HEALTH CENTER":{"WORKING DAY":62081,"HOLIDAY":8354},"TAWI ATAYR HOSPITAL":{"WORKING DAY":74212,"HOLIDAY":19054},"SADAH HOSPITAL":{"WORKING DAY":65448,"HOLIDAY":14626},"SHALIM HOSPITAL":{"WORKING DAY":61988,"HOLIDAY":20226},"TITAM HEALTH CENTER":{"WORKING DAY":31507,"HOLIDAY":1306},"DALKUT HEALTH CENTER":{"WORKING DAY":43736,"HOLIDAY":15554},"ASH SHUWAYMIYAH HEALTH CENTER":{"WORKING DAY":26871,"HOLIDAY":7022},"HARWIB HEALTH CENTER":{"WORKING DAY":25938,"HOLIDAY":4750},"ANDAT HEALTH CENTER":{"WORKING DAY":25738,"HOLIDAY":6623},"MUQSHIN HOSPITAL":{"WORKING DAY":17434,"HOLIDAY":1750},"MUDAYY HEALTH CENTER":{"WORKING DAY":23485,"HOLIDAY":6643},"JIBJAT HEALTH CENTER":{"WORKING DAY":27316,"HOLIDAY":7790},"HASIK HEALTH CENTER":{"WORKING DAY":26829,"HOLIDAY":9510},"HADBIN HEALTH CENTER":{"WORKING DAY":22407,"HOLIDAY":5807},"KHADRAFI HEALTH CENTER":{"WORKING DAY":20160,"HOLIDAY":7948},"RAKHYUT HOSPITAL":{"WORKING DAY":16322,"HOLIDAY":4667},"MITN HEALTH CENTER":{"WORKING DAY":20491,"HOLIDAY":2149},"HEJAYF HEALTH CENTER":{"WORKING DAY":8131},"KUBUT HEALTH CENTER":{"WORKING DAY":19598,"HOLIDAY":7990},"SHARBTHAT HEALTH CENTER":{"WORKING DAY":14352,"HOLIDAY":3673},"DHAHBUN HEALTH CENTER":{"WORKING DAY":13501,"HOLIDAY":3553},"SARFET HEALTH CENTER":{"WORKING DAY":8030},"DIMIT HEALTH CENTER":{"WORKING DAY":15893,"HOLIDAY":5821},"AYBOT HEALTH CENTER":{"WORKING DAY":10591,"HOLIDAY":3614},"SAWB HEALTH CENTER":{"WORKING DAY":12507,"HOLIDAY":1372},"BARR BAZOOM HEALTH CENTER":{"WORKING DAY":4359,"HOLIDAY":4},"TOSINAT HEALTH CENTER":{"WORKING DAY":10090,"HOLIDAY":799},"AL HALLANIYAT HEALTH CENTER":{"WORKING DAY":7090,"HOLIDAY":1320},"MATOURA & JIJWAL HEALTH CENTER":{"WORKING DAY":9638,"HOLIDAY":2570},"AL MASHASH HEALTH CENTER":{"WORKING DAY":2893,"HOLIDAY":613},"BITHNAH HEALTH CENTER":{"WORKING DAY":3336,"HOLIDAY":658},"AL HASHMAN HEALTH CENTER":{"WORKING DAY":2471,"HOLIDAY":786}},
+  by_estab_month:{"AS SAADAH HEALTH CENTER":{"10":75709,"8":72882,"5":65334,"9":73291,"3":67271,"11":63355,"12":61093,"7":61202,"2":54150,"4":62716,"1":54910,"6":50185},"SALALAH AL GHARBIA HEALTH CENTER":{"10":50883,"12":42165,"9":47496,"3":44628,"4":44875,"5":44809,"11":44365,"8":44775,"7":39462,"2":38902,"1":40411,"6":35625},"AWQAD HEALTH CENTER":{"8":48693,"5":45344,"10":48262,"12":40809,"9":46996,"4":41485,"7":41924,"3":40752,"11":40979,"2":37667,"1":38791,"6":33838},"AS SULTAN QABOOS HOSPITAL":{"8":127375,"10":121947,"9":120988,"3":106196,"7":118554,"12":118931,"4":101424,"5":118846,"11":113244,"2":102181,"1":105756,"6":95048},"SALALAH AL JADIDAH HEALTH CENTER":{"10":22115,"12":19204,"5":19620,"9":20675,"3":15851,"4":16250,"8":17881,"11":18828,"1":16664,"7":15970,"2":16303,"6":13181},"AL DAHAREEZ HEALTH CENTER":{"10":21930,"9":20149,"12":18106,"11":19105,"5":18250,"4":15598,"3":15299,"7":15974,"8":17715,"2":15243,"1":15206,"6":12040},"AL MAZYUNAH HOSPITAL":{"10":29250,"12":28001,"11":25462,"5":24100,"1":23053,"9":25440,"2":21049,"3":22123,"4":21311,"7":20279,"8":19998,"6":19344},"TAQAH HOSPITAL":{"10":28132,"8":26803,"5":23195,"3":23143,"9":26422,"11":24064,"7":22459,"12":21754,"1":19711,"2":19567,"4":22336,"6":17722},"MIRBAT HOSPITAL":{"10":25420,"12":20194,"8":21473,"9":22106,"11":21646,"3":19085,"4":18560,"7":19501,"5":19286,"1":17411,"2":16930,"6":15272},"THUMRAYT HOSPITAL":{"12":18681,"10":19432,"4":15512,"9":18367,"11":17936,"5":17092,"1":14819,"2":14341,"3":15914,"7":14120,"8":15576,"6":12803},"MADINAT AL HAQQ HOSPITAL":{"10":14730,"5":12768,"4":12494,"12":11243,"9":12614,"11":12798,"3":11618,"1":10436,"2":10196,"8":9794,"7":8602,"6":9567},"SHAHB ASAYB HEALTH CENTER":{"10":10899,"4":8975,"5":8381,"12":8410,"11":9299,"9":8534,"3":8146,"7":6303,"2":5754,"6":6574,"8":5675,"1":5411},"QAYRUN HAYRITI HEALTH CENTER":{"10":8760,"12":5829,"4":6109,"9":6384,"5":6754,"11":6585,"3":5799,"8":4923,"1":4862,"2":5018,"6":4719,"7":4693},"TAWI ATAYR HOSPITAL":{"10":10349,"5":8121,"12":8447,"11":8276,"9":7920,"3":8427,"4":8187,"2":6833,"7":6630,"8":6771,"1":6818,"6":6487},"SADAH HOSPITAL":{"9":8063,"10":9126,"12":6969,"5":6548,"11":8201,"4":6786,"1":6030,"3":7578,"2":6109,"7":4875,"8":5082,"6":4707},"SHALIM HOSPITAL":{"10":7971,"12":7397,"5":7181,"4":7014,"9":7462,"11":7225,"7":6331,"1":6433,"3":7056,"8":6093,"2":5775,"6":6276},"TITAM HEALTH CENTER":{"10":3870,"12":2799,"4":3117,"11":2975,"5":3309,"9":2847,"3":2762,"8":2330,"1":2413,"2":2351,"7":2039,"6":2001},"DALKUT HEALTH CENTER":{"10":7064,"3":5559,"5":5462,"12":5421,"11":5923,"4":5935,"1":4147,"9":4574,"2":3593,"7":4138,"6":4620,"8":2854},"ASH SHUWAYMIYAH HEALTH CENTER":{"10":3654,"5":2887,"11":3301,"9":3099,"12":3043,"1":2819,"8":2408,"3":2892,"4":2725,"2":2454,"7":2475,"6":2136},"HARWIB HEALTH CENTER":{"10":3118,"11":3044,"3":2767,"12":2649,"9":3326,"5":2736,"4":2264,"1":2732,"6":2010,"7":2036,"2":2237,"8":1769},"ANDAT HEALTH CENTER":{"10":3376,"5":2954,"3":3052,"9":3121,"11":2552,"12":3007,"2":2942,"1":3079,"4":2612,"8":1730,"6":2036,"7":1900},"MUQSHIN HOSPITAL":{"12":2171,"3":1924,"10":2301,"11":1842,"2":1578,"1":1758,"4":1676,"5":1395,"9":1643,"7":1019,"8":1127,"6":750},"MUDAYY HEALTH CENTER":{"3":2483,"10":3233,"9":2975,"4":2826,"5":2855,"12":2719,"1":2907,"2":2057,"11":2806,"8":1741,"7":1636,"6":1890},"JIBJAT HEALTH CENTER":{"10":3746,"5":3024,"4":2944,"11":3207,"3":2716,"12":2990,"9":4358,"2":2337,"1":2387,"7":2422,"8":2791,"6":2184},"HASIK HEALTH CENTER":{"10":4285,"11":3379,"12":2963,"9":3520,"5":3062,"1":2836,"2":2675,"4":2864,"3":2973,"7":2854,"8":2362,"6":2566},"HADBIN HEALTH CENTER":{"11":3182,"12":2530,"10":2963,"9":2750,"5":2373,"2":2301,"1":2309,"4":2299,"3":2342,"7":1781,"8":1732,"6":1652},"KHADRAFI HEALTH CENTER":{"10":3652,"11":2720,"12":2303,"4":2778,"5":2570,"2":1791,"6":2615,"9":2257,"1":1906,"7":1834,"3":2292,"8":1390},"RAKHYUT HOSPITAL":{"11":2542,"10":2515,"12":1758,"1":1880,"4":1720,"5":1729,"7":1466,"8":1092,"9":1623,"3":1756,"6":1432,"2":1476},"MITN HEALTH CENTER":{"10":2437,"12":2336,"11":2246,"9":1963,"1":1942,"4":1813,"2":1917,"3":1769,"7":1507,"5":1800,"8":1484,"6":1426},"HEJAYF HEALTH CENTER":{"5":984,"3":720,"4":750,"9":739,"10":778,"1":604,"12":632,"11":647,"2":668,"8":549,"7":557,"6":503},"KUBUT HEALTH CENTER":{"1":2524,"12":2746,"10":2483,"3":2338,"9":2579,"2":2257,"5":2345,"11":2410,"4":2271,"7":1778,"8":1775,"6":2082},"SHARBTHAT HEALTH CENTER":{"10":1844,"9":2163,"11":1833,"12":1549,"5":1684,"8":1330,"3":1429,"1":1337,"2":1288,"4":1403,"7":981,"6":1184},"DHAHBUN HEALTH CENTER":{"10":2311,"11":2336,"9":1994,"1":1316,"12":1787,"2":1120,"8":1298,"4":1121,"5":1049,"3":962,"7":842,"6":918},"SARFET HEALTH CENTER":{"1":774,"8":861,"12":705,"10":727,"7":743,"2":627,"9":612,"4":566,"5":743,"11":626,"6":567,"3":479},"DIMIT HEALTH CENTER":{"10":2388,"3":2015,"12":2066,"9":2337,"4":1957,"2":1780,"5":1917,"11":1817,"1":1871,"6":1525,"7":1117,"8":924},"AYBOT HEALTH CENTER":{"12":1844,"1":1247,"9":1365,"3":973,"10":1701,"2":1046,"11":1342,"7":960,"5":939,"8":1010,"4":932,"6":846},"SAWB HEALTH CENTER":{"10":1434,"9":1300,"8":1165,"2":1243,"12":1121,"11":1224,"3":1292,"4":1102,"5":1158,"1":980,"7":996,"6":864},"BARR BAZOOM HEALTH CENTER":{"11":568,"12":587,"10":509,"4":412,"9":383,"5":403,"6":306,"2":304,"1":321,"7":244,"3":223,"8":103},"TOSINAT HEALTH CENTER":{"9":992,"10":1179,"12":999,"1":1135,"2":880,"11":798,"5":934,"8":810,"7":747,"4":858,"3":842,"6":715},"AL HALLANIYAT HEALTH CENTER":{"12":1081,"10":986,"4":840,"5":765,"3":804,"2":888,"1":745,"11":769,"9":514,"6":427,"7":316,"8":275},"MATOURA & JIJWAL HEALTH CENTER":{"12":1077,"3":1269,"9":1365,"11":1195,"10":1028,"5":1056,"7":841,"6":1004,"1":923,"8":809,"4":922,"2":719},"AL MASHASH HEALTH CENTER":{"10":363,"12":299,"11":343,"1":332,"5":367,"3":515,"2":336,"4":375,"8":149,"9":123,"6":204,"7":100},"BITHNAH HEALTH CENTER":{"10":458,"12":550,"2":367,"11":399,"3":383,"5":359,"4":394,"9":277,"1":341,"7":156,"6":155,"8":155},"AL HASHMAN HEALTH CENTER":{"10":331,"12":433,"11":377,"7":239,"1":249,"8":248,"5":257,"9":246,"3":270,"4":219,"2":210,"6":178}},
+  by_wil_month:{"SALALAH":{"10":354254,"8":337123,"5":323250,"9":339565,"3":299278,"11":310083,"12":309568,"7":300375,"2":272483,"4":292324,"1":279617,"6":247140},"AL MAZYUNAH":{"10":40388,"12":38069,"11":35297,"5":33580,"1":32864,"9":36207,"2":29744,"3":31822,"4":29780,"7":27310,"8":26600,"6":26535},"TAQAH":{"10":46608,"8":39388,"5":38987,"3":37477,"9":43394,"11":40069,"7":33483,"12":35987,"1":32534,"2":32100,"4":37774,"6":29473},"MIRBAT":{"10":35769,"12":28641,"8":28244,"9":30026,"11":29922,"3":27512,"4":26747,"7":26131,"5":27407,"1":24229,"2":23763,"6":21759},"THUMRAYT":{"12":26601,"10":27975,"4":21416,"9":25607,"11":25764,"5":22954,"1":21200,"2":19445,"3":21208,"7":18197,"8":20131,"6":17096},"RAKHYUT":{"10":13414,"4":10695,"5":10110,"12":10168,"11":11841,"9":10157,"3":9902,"7":7769,"2":7230,"6":8006,"8":6767,"1":7291},"SADAH":{"9":15633,"10":17808,"12":13583,"5":13141,"11":15986,"4":13051,"1":12155,"3":14185,"2":12328,"7":10506,"8":10341,"6":9789},"SHALIM WA JUZUR AL HALLANIYAT":{"10":19326,"12":17882,"5":16779,"4":16210,"9":18154,"11":17355,"7":12998,"1":15729,"3":16534,"8":12805,"2":14442,"6":13630},"DALKUT":{"10":11443,"3":8330,"5":8775,"12":8429,"11":9269,"4":9279,"1":6827,"9":7443,"2":6011,"7":6715,"6":7802,"8":5105},"MAQSHIN":{"12":2470,"3":2439,"10":2664,"11":2185,"2":1914,"1":2090,"4":2051,"5":1762,"9":1766,"7":1119,"8":1276,"6":954}},
+  by_year_month:{"2023":{"10":194959,"8":172127,"9":181682,"5":168180,"3":175240,"11":166892,"7":152898,"1":144985,"12":154712,"2":134896,"4":142288,"6":129888},"2024":{"5":166336,"10":185458,"9":173202,"12":175196,"2":147763,"8":157201,"3":154737,"4":151060,"11":163007,"1":138157,"7":141500,"6":124797},"2025":{"10":189232,"9":173068,"5":162229,"8":158452,"7":150205,"12":161490,"11":167872,"4":165979,"1":151394,"2":136801,"3":138710,"6":127499}},
+  by_wil_year_month:{"SALALAH":{"2023":{"10":120652,"8":121544,"9":116802,"5":111005,"3":113960,"11":105610,"7":104033,"1":94964,"12":98188,"2":88960,"4":90980,"6":85832},"2024":{"5":108161,"10":117294,"9":110731,"12":109994,"2":95968,"8":107738,"3":100226,"4":96752,"11":101402,"1":91633,"7":95024,"6":80350},"2025":{"10":116308,"9":112032,"5":104084,"8":107841,"7":101318,"12":101386,"11":103071,"4":104592,"1":93020,"2":87555,"3":85092,"6":80958}},"AL MAZYUNAH":{"2023":{"10":13791,"11":12476,"5":11132,"1":10517,"12":11793,"9":11940,"3":12045,"2":10149,"8":9067,"7":9203,"6":8744,"4":9128},"2024":{"10":12672,"12":12722,"5":11346,"9":11919,"1":9823,"2":10298,"11":10352,"7":8795,"8":8479,"4":9944,"6":8223,"3":9861},"2025":{"5":11102,"10":13925,"1":12524,"4":10708,"7":9312,"3":9916,"2":9297,"6":9568,"9":12348,"12":13554,"8":9054,"11":12469}},"TAQAH":{"2023":{"10":17080,"8":13660,"5":13507,"3":14099,"9":15380,"11":12884,"7":12057,"1":11146,"2":10290,"12":11008,"6":10171,"4":12069},"2024":{"10":14168,"9":14232,"5":12848,"12":13042,"8":12865,"2":11327,"11":12691,"3":11900,"7":10429,"1":9907,"4":11931,"6":9492},"2025":{"10":15360,"9":13782,"11":14494,"4":13774,"8":12863,"5":12632,"7":10997,"12":11937,"1":11481,"2":10483,"3":11478,"6":9810}},"MIRBAT":{"2025":{"10":12920,"9":9876,"11":10556,"4":10028,"12":9427,"7":9161,"5":9424,"8":9534,"3":8825,"1":8604,"2":8108,"6":7676},"2023":{"10":11914,"8":9113,"11":9672,"9":10426,"3":9928,"5":8759,"1":7859,"7":8554,"12":8817,"2":7445,"4":8018,"6":6765},"2024":{"10":10935,"12":10397,"9":9724,"8":9597,"11":9694,"5":9224,"7":8416,"2":8210,"3":8759,"4":8701,"1":7766,"6":7318}},"THUMRAYT":{"2024":{"12":9783,"10":9620,"5":8271,"9":8840,"11":9063,"2":6991,"1":6403,"4":7575,"7":6646,"3":7776,"8":7041,"6":6160},"2025":{"10":8793,"4":7709,"12":8033,"9":7999,"5":7513,"11":7579,"1":8923,"2":7329,"7":5816,"8":6342,"6":5323,"3":6506},"2023":{"10":9562,"11":9122,"5":7170,"9":8768,"3":6926,"12":8785,"1":5874,"8":6748,"7":5735,"6":5613,"2":5125,"4":6132}},"RAKHYUT":{"2024":{"10":4482,"5":3341,"12":3773,"9":3432,"11":3793,"2":2676,"7":2606,"4":3284,"3":3179,"8":2258,"6":2721,"1":2105},"2023":{"10":4532,"11":3666,"5":3038,"9":3564,"3":3306,"12":3209,"7":2258,"1":2406,"8":1985,"6":2327,"4":3018,"2":1992},"2025":{"10":4400,"4":4393,"5":3731,"11":4382,"12":3186,"9":3161,"7":2905,"6":2958,"2":2562,"8":2524,"3":3417,"1":2780}},"SADAH":{"2024":{"9":5448,"10":5634,"12":4982,"11":5886,"5":4292,"2":4393,"4":4200,"7":3460,"3":4380,"8":3396,"1":3623,"6":3340},"2023":{"10":6031,"11":4894,"9":4831,"1":4139,"3":5023,"5":4362,"12":4186,"8":3265,"2":3728,"7":3495,"6":3032,"4":4062},"2025":{"9":5354,"10":6143,"5":4487,"11":5206,"4":4789,"12":4415,"1":4393,"3":4782,"2":4207,"7":3551,"8":3680,"6":3417}},"SHALIM WA JUZUR AL HALLANIYAT":{"2025":{"10":6416,"5":5794,"4":5937,"1":6298,"11":6031,"12":5785,"9":5669,"7":4337,"8":4229,"2":4890,"6":4599,"3":5192},"2023":{"10":6735,"5":5469,"9":6522,"7":4903,"11":4949,"3":5885,"1":4871,"8":4657,"12":5517,"6":4660,"2":4440,"4":4862},"2024":{"10":6175,"12":6580,"5":5516,"9":5963,"11":6375,"2":5112,"1":4560,"4":5411,"3":5457,"7":3758,"6":4371,"8":3919}},"DALKUT":{"2025":{"10":4165,"11":3435,"12":2910,"3":2943,"4":3269,"5":2833,"9":2272,"1":2639,"7":2318,"6":2795,"8":1878,"2":1883},"2024":{"10":3725,"5":2842,"12":3116,"11":3165,"4":2762,"2":2119,"9":2427,"3":2421,"7":2156,"6":2592,"1":1861,"8":1653},"2023":{"3":2966,"10":3553,"5":3100,"11":2669,"1":2327,"12":2403,"4":3248,"9":2744,"2":2009,"7":2241,"6":2415,"8":1574}},"MAQSHIN":{"2025":{"12":857,"10":802,"4":780,"1":732,"5":629,"11":649,"9":575,"2":487,"7":490,"3":559,"8":507,"6":395},"2023":{"3":1102,"10":1109,"11":950,"1":882,"12":806,"2":758,"9":705,"4":771,"5":638,"8":514,"7":419,"6":329},"2024":{"10":753,"2":669,"3":778,"12":807,"9":486,"5":495,"11":586,"4":500,"1":476,"7":210,"8":255,"6":230}}},
+  by_estab_year_month:{"AS SAADAH HEALTH CENTER":{"2023":{"10":28860,"8":27522,"9":28056,"5":22242,"3":24674,"11":22922,"7":23150,"1":19193,"12":21297,"2":18005,"4":21208,"6":17802},"2024":{"5":22761,"10":22873,"9":22633,"12":20920,"2":20088,"8":22982,"3":23142,"4":21534,"11":20309,"1":18384,"7":18767,"6":16758},"2025":{"10":23976,"9":22602,"5":20331,"8":22378,"7":19285,"12":18876,"11":20124,"4":19974,"1":17333,"2":16057,"3":19455,"6":15625}},"SALALAH AL GHARBIA HEALTH CENTER":{"2024":{"10":15367,"12":14106,"9":14412,"5":16686,"11":13713,"8":13316,"2":14883,"7":12254,"3":17158,"4":15902,"1":14385,"6":13177},"2025":{"10":14778,"9":13696,"4":12670,"5":12080,"11":13086,"12":11631,"8":11953,"7":10791,"1":11429,"2":10357,"6":9156,"3":8829},"2023":{"10":20738,"3":18641,"5":16043,"8":19506,"11":17566,"9":19388,"1":14597,"7":16417,"12":16428,"2":13662,"4":16303,"6":13292}},"AWQAD HEALTH CENTER":{"2023":{"8":21097,"5":16758,"10":19574,"9":19464,"3":17120,"11":15207,"7":16967,"1":13811,"12":14806,"2":13016,"6":12644,"4":14149},"2024":{"10":14626,"12":13364,"5":15633,"9":14008,"11":12920,"2":14240,"8":13621,"7":12572,"1":13549,"3":15659,"4":14483,"6":11908},"2025":{"5":12953,"10":14062,"8":13975,"12":12639,"9":13524,"4":12853,"7":12385,"11":12852,"1":11431,"2":10411,"6":9286,"3":7973}},"AS SULTAN QABOOS HOSPITAL":{"2024":{"8":43531,"10":45411,"9":42545,"12":43824,"11":38416,"7":38721,"5":36045,"2":32857,"1":33155,"4":30959,"3":30942,"6":27826},"2025":{"8":45081,"3":38011,"9":45803,"10":44378,"7":45146,"4":42314,"5":42788,"11":40526,"2":37749,"1":38959,"12":42901,"6":35807},"2023":{"5":40013,"3":37243,"8":38763,"1":33642,"11":34302,"7":34687,"12":32206,"6":31415,"2":31575,"9":32640,"10":32158,"4":28151}},"SALALAH AL JADIDAH HEALTH CENTER":{"2023":{"10":7470,"5":6430,"9":7074,"3":6572,"8":6240,"11":6224,"1":5633,"2":5292,"7":5191,"12":5757,"6":4481,"4":4252},"2024":{"12":7208,"10":7385,"5":7025,"9":6825,"11":6374,"2":5697,"8":5766,"1":5199,"4":5454,"7":5181,"3":5073,"6":4064},"2025":{"10":7260,"9":6776,"4":6544,"12":6239,"5":6165,"1":5832,"11":6230,"7":5598,"2":5314,"8":5875,"6":4636,"3":4206}},"AL DAHAREEZ HEALTH CENTER":{"2025":{"10":7534,"9":6599,"11":6655,"5":6106,"4":6231,"12":6033,"7":5716,"8":6009,"1":5405,"2":5126,"6":4010,"3":3862},"2024":{"10":7335,"9":7061,"12":6801,"5":6376,"11":6182,"8":6007,"2":5569,"4":5431,"7":5212,"3":5477,"1":4761,"6":4279},"2023":{"10":7061,"9":6489,"3":5960,"11":6268,"5":5768,"8":5699,"12":5272,"7":5046,"1":5040,"2":4548,"6":3751,"4":3936}},"AL MAZYUNAH HOSPITAL":{"2023":{"10":9144,"11":8291,"5":7304,"1":7078,"12":8224,"9":7652,"3":7298,"2":6396,"8":6207,"7":6380,"6":5897,"4":6131},"2024":{"10":9403,"12":9648,"5":8387,"9":8767,"1":6719,"2":7407,"11":7634,"7":6646,"8":6578,"4":7335,"6":6230,"3":7057},"2025":{"5":8409,"10":10703,"1":9256,"4":7845,"7":7253,"3":7768,"2":7246,"6":7217,"9":9021,"12":10129,"8":7213,"11":9537}},"TAQAH HOSPITAL":{"2023":{"10":10266,"8":9269,"5":7949,"3":8422,"9":9004,"11":7550,"7":7969,"1":6717,"2":6263,"12":6633,"6":5959,"4":7135},"2024":{"10":8687,"9":8656,"5":7642,"12":7674,"8":8831,"2":6884,"11":7505,"3":7414,"7":7188,"1":6034,"4":7071,"6":5751},"2025":{"10":9179,"9":8762,"11":9009,"4":8130,"8":8703,"5":7604,"7":7302,"12":7447,"1":6960,"2":6420,"3":7307,"6":6012}},"MIRBAT HOSPITAL":{"2025":{"10":9567,"9":7536,"11":7524,"4":7322,"12":6879,"7":7044,"5":6722,"8":7235,"3":6160,"1":6416,"2":5808,"6":5424},"2023":{"10":7970,"8":6898,"11":7063,"9":7505,"3":7092,"5":6044,"1":5466,"7":6126,"12":6063,"2":5261,"4":5309,"6":4695},"2024":{"10":7883,"12":7252,"9":7065,"8":7340,"11":7059,"5":6520,"7":6331,"2":5861,"3":5833,"4":5929,"1":5529,"6":5153}},"THUMRAYT HOSPITAL":{"2024":{"12":7099,"10":6675,"5":5753,"9":6274,"11":6377,"2":4976,"1":4008,"4":5354,"7":4932,"3":5714,"8":5211,"6":4381},"2025":{"10":5907,"4":5067,"12":5201,"9":5476,"5":5249,"11":5025,"1":5849,"2":4909,"7":4199,"8":4676,"6":3523,"3":4324},"2023":{"10":6850,"11":6534,"5":6090,"9":6617,"3":5876,"12":6381,"1":4962,"8":5689,"7":4989,"6":4899,"2":4456,"4":5091}},"MADINAT AL HAQQ HOSPITAL":{"2023":{"10":5487,"5":4467,"9":4733,"11":4364,"3":4559,"1":3651,"2":3310,"12":3570,"8":3434,"7":3212,"6":3441,"4":3992},"2024":{"10":4356,"5":4220,"12":4237,"11":4117,"9":4082,"4":3941,"2":3532,"1":3202,"3":3691,"8":3130,"7":2491,"6":3075},"2025":{"10":4887,"4":4561,"5":4081,"11":4317,"2":3354,"9":3799,"12":3436,"7":2899,"1":3583,"8":3230,"6":3051,"3":3368}},"SHAHB ASAYB HEALTH CENTER":{"2024":{"10":3816,"5":2899,"12":3113,"9":2889,"11":2919,"2":2278,"7":2168,"4":2811,"3":2724,"8":1976,"6":2267,"1":1643},"2023":{"10":3437,"11":2959,"5":2388,"9":2980,"3":2630,"12":2700,"7":1775,"1":1671,"8":1642,"6":1821,"4":2454,"2":1421},"2025":{"10":3646,"4":3710,"5":3094,"11":3421,"12":2597,"9":2665,"7":2360,"6":2486,"2":2055,"8":2057,"3":2792,"1":2097}},"QAYRUN HAYRITI HEALTH CENTER":{"2023":{"10":3121,"9":2365,"3":2243,"5":2254,"11":1960,"4":1777,"8":1680,"1":1787,"7":1671,"2":1719,"6":1483,"12":1545},"2025":{"10":2851,"4":2487,"5":2336,"11":2414,"12":1985,"9":1919,"3":1728,"1":1732,"6":1651,"2":1632,"8":1689,"7":1536},"2024":{"10":2788,"12":2299,"5":2164,"11":2211,"9":2100,"4":1845,"3":1828,"2":1667,"1":1343,"8":1554,"6":1585,"7":1486}},"TAWI ATAYR HOSPITAL":{"2023":{"10":3944,"5":2715,"9":2921,"3":2836,"11":2609,"7":2428,"8":2215,"12":2754,"1":2393,"2":2184,"6":2070,"4":2709},"2024":{"10":3052,"12":3145,"5":2704,"9":2659,"4":2772,"2":2349,"11":2635,"3":2926,"8":2257,"1":2237,"7":2085,"6":2165},"2025":{"10":3353,"5":2702,"11":3032,"4":2706,"12":2548,"9":2340,"2":2300,"3":2665,"6":2252,"8":2299,"1":2188,"7":2117}},"SADAH HOSPITAL":{"2024":{"9":2827,"10":2933,"12":2513,"11":2857,"5":2115,"2":2228,"4":2248,"7":1632,"3":2353,"8":1651,"1":1795,"6":1647},"2023":{"10":3027,"11":2509,"9":2360,"1":2020,"3":2597,"5":2074,"12":2128,"8":1580,"2":1728,"7":1529,"6":1328,"4":1988},"2025":{"9":2876,"10":3166,"5":2359,"11":2835,"4":2550,"12":2328,"1":2215,"3":2628,"2":2153,"7":1714,"8":1851,"6":1732}},"SHALIM HOSPITAL":{"2025":{"10":2877,"5":2642,"4":2573,"1":2503,"11":2470,"12":2399,"9":2552,"7":2183,"8":2241,"2":1971,"6":2171,"3":2187},"2023":{"10":2594,"5":2166,"9":2501,"7":2371,"11":2195,"3":2414,"1":2080,"8":2024,"12":2341,"6":2052,"2":1798,"4":2164},"2024":{"10":2500,"12":2657,"5":2373,"9":2409,"11":2560,"2":2006,"1":1850,"4":2277,"3":2455,"7":1777,"6":2053,"8":1828}},"TITAM HEALTH CENTER":{"2024":{"10":1290,"12":1222,"11":1032,"5":1049,"9":946,"8":787,"4":873,"7":660,"2":730,"1":690,"3":750,"6":590},"2023":{"10":1394,"5":1250,"9":1020,"3":1175,"11":927,"8":829,"1":1007,"7":705,"6":793,"2":904,"4":1038,"12":669},"2025":{"4":1206,"10":1186,"5":1010,"11":1016,"12":908,"9":881,"8":714,"2":717,"7":674,"3":837,"1":716,"6":618}},"DALKUT HEALTH CENTER":{"2025":{"10":2539,"11":2216,"12":1779,"3":2008,"4":1982,"5":1734,"9":1410,"1":1572,"7":1413,"6":1548,"8":1026,"2":1010},"2024":{"10":2425,"5":1830,"12":1977,"11":2010,"4":1867,"2":1352,"9":1472,"3":1589,"7":1315,"6":1615,"1":1146,"8":915},"2023":{"3":1962,"10":2100,"5":1898,"11":1697,"1":1429,"12":1665,"4":2086,"9":1692,"2":1231,"7":1410,"6":1457,"8":913}},"ASH SHUWAYMIYAH HEALTH CENTER":{"2023":{"10":1486,"5":1174,"9":1165,"1":994,"8":1018,"11":935,"12":906,"3":1275,"2":870,"7":947,"6":873,"4":865},"2024":{"10":1173,"12":1207,"11":1265,"9":976,"4":995,"5":816,"2":824,"1":821,"7":688,"3":837,"8":652,"6":566},"2025":{"11":1101,"10":995,"12":930,"9":958,"5":897,"1":1004,"2":760,"7":840,"6":697,"4":865,"3":780,"8":738}},"HARWIB HEALTH CENTER":{"2023":{"10":1578,"11":1644,"3":1714,"9":1674,"5":1375,"12":1149,"1":1060,"2":1158,"7":955,"8":954,"4":1020,"6":948},"2025":{"12":868,"9":873,"4":633,"10":784,"1":618,"11":705,"6":542,"5":581,"7":510,"8":370,"3":386,"2":335},"2024":{"5":780,"9":779,"10":756,"11":695,"12":632,"1":1054,"2":744,"7":571,"3":667,"8":445,"6":520,"4":611}},"ANDAT HEALTH CENTER":{"2023":{"10":1330,"3":1376,"9":1179,"11":1051,"5":1079,"12":1174,"2":1277,"1":996,"8":741,"6":771,"4":913,"7":693},"2024":{"5":1041,"10":1130,"12":943,"9":1009,"2":950,"4":838,"3":939,"1":874,"11":746,"7":674,"8":500,"6":595},"2025":{"10":916,"9":933,"1":1209,"4":861,"5":834,"12":890,"11":755,"2":715,"3":737,"6":670,"8":489,"7":533}},"MUQSHIN HOSPITAL":{"2025":{"12":857,"10":802,"4":660,"1":644,"5":485,"11":649,"9":530,"2":396,"7":473,"3":413,"8":449,"6":324},"2023":{"3":915,"10":881,"11":788,"1":769,"12":697,"2":633,"9":627,"4":632,"5":537,"8":456,"7":369,"6":269},"2024":{"10":618,"2":549,"3":596,"12":617,"9":486,"5":373,"11":405,"4":384,"1":345,"7":177,"8":222,"6":157}},"MUDAYY HEALTH CENTER":{"2024":{"3":755,"10":1112,"9":980,"4":925,"5":1020,"12":928,"2":588,"11":980,"1":910,"7":550,"8":587,"6":658},"2023":{"10":1150,"5":926,"9":1174,"11":962,"12":821,"3":826,"1":752,"4":880,"8":651,"7":598,"2":534,"6":635},"2025":{"5":909,"1":1245,"10":971,"12":970,"4":1021,"11":864,"9":821,"2":935,"3":902,"8":503,"6":597,"7":488}},"JIBJAT HEALTH CENTER":{"2023":{"10":1327,"5":1091,"3":1118,"9":1643,"11":970,"8":957,"1":778,"7":876,"12":805,"2":717,"6":771,"4":942},"2025":{"10":1294,"4":1083,"11":1168,"5":947,"12":1054,"9":1221,"1":938,"7":796,"3":803,"2":709,"8":930,"6":747},"2024":{"10":1125,"5":986,"12":1131,"9":1494,"11":1069,"2":911,"4":919,"8":904,"7":750,"3":795,"1":671,"6":666}},"HASIK HEALTH CENTER":{"2023":{"10":1572,"11":1164,"5":1072,"9":1154,"3":1121,"12":986,"7":1004,"1":955,"2":854,"4":947,"8":745,"6":848},"2025":{"10":1428,"9":1201,"4":1046,"5":992,"12":908,"1":1004,"7":921,"3":974,"2":863,"11":946,"8":867,"6":853},"2024":{"10":1285,"12":1069,"9":1165,"5":998,"11":1269,"1":877,"2":958,"7":929,"4":871,"3":878,"8":750,"6":865}},"HADBIN HEALTH CENTER":{"2024":{"11":1368,"12":1032,"10":1027,"9":1025,"5":812,"2":819,"3":819,"1":693,"4":741,"8":630,"7":548,"6":551},"2025":{"11":1026,"9":920,"10":1014,"5":819,"2":794,"12":765,"4":804,"3":778,"1":835,"7":634,"8":633,"6":563},"2023":{"5":742,"1":781,"11":788,"10":922,"9":805,"3":745,"12":733,"2":688,"6":538,"7":599,"4":754,"8":469}},"KHADRAFI HEALTH CENTER":{"2025":{"10":1379,"11":1002,"12":909,"4":1026,"5":862,"6":1050,"9":596,"1":705,"3":819,"7":658,"2":575,"8":515},"2023":{"10":1281,"5":936,"9":898,"1":671,"4":1013,"11":789,"6":760,"7":632,"3":799,"8":425,"2":604,"12":583},"2024":{"10":992,"12":811,"2":612,"1":530,"11":929,"9":763,"5":772,"3":674,"4":739,"7":544,"6":805,"8":450}},"RAKHYUT HOSPITAL":{"2025":{"11":961,"1":683,"10":754,"12":589,"4":683,"5":637,"7":545,"8":467,"9":496,"6":472,"2":507,"3":625},"2024":{"11":874,"10":666,"12":660,"5":442,"9":543,"2":398,"7":438,"1":462,"6":454,"4":473,"8":282,"3":455},"2023":{"10":1095,"1":735,"11":707,"3":676,"5":650,"12":509,"2":571,"7":483,"6":506,"9":584,"4":564,"8":343}},"MITN HEALTH CENTER":{"2023":{"10":900,"1":682,"11":754,"2":787,"3":666,"9":614,"7":565,"8":550,"12":655,"5":587,"4":518,"6":497},"2025":{"10":841,"12":837,"11":779,"9":680,"1":703,"4":802,"5":654,"7":520,"2":569,"8":472,"6":548,"3":589},"2024":{"12":844,"10":696,"11":713,"9":669,"1":557,"2":561,"5":559,"3":514,"8":462,"4":493,"7":422,"6":381}},"HEJAYF HEALTH CENTER":{"2024":{"5":422,"4":271,"12":250,"11":245,"2":237,"10":219,"9":201,"3":197,"8":174,"7":171,"1":167,"6":163},"2023":{"3":332,"9":306,"10":276,"1":254,"5":247,"2":239,"11":234,"8":208,"12":208,"7":199,"6":171,"4":166},"2025":{"5":315,"4":313,"10":283,"9":232,"2":192,"3":191,"7":187,"1":183,"12":174,"6":169,"11":168,"8":167}},"KUBUT HEALTH CENTER":{"2025":{"1":1134,"3":744,"12":830,"10":741,"9":708,"5":778,"2":725,"4":776,"6":662,"11":727,"7":487,"8":467},"2024":{"12":1045,"3":760,"10":847,"2":860,"5":805,"11":939,"4":780,"9":830,"1":708,"7":538,"8":600,"6":633},"2023":{"10":895,"9":1041,"3":834,"12":871,"1":682,"7":753,"5":762,"11":744,"8":708,"2":672,"6":787,"4":715}},"SHARBTHAT HEALTH CENTER":{"2023":{"10":853,"9":938,"11":591,"5":670,"8":562,"12":465,"2":429,"7":412,"3":500,"1":419,"6":435,"4":465},"2025":{"11":628,"9":528,"10":503,"12":517,"3":516,"5":511,"1":537,"4":503,"2":373,"8":365,"6":369,"7":286},"2024":{"12":567,"9":697,"11":614,"2":486,"5":503,"10":488,"1":381,"8":403,"3":413,"4":435,"6":380,"7":283}},"DHAHBUN HEALTH CENTER":{"2025":{"10":731,"9":668,"1":792,"12":586,"2":572,"4":632,"11":592,"8":473,"3":468,"7":433,"5":481,"6":457},"2023":{"11":946,"10":846,"9":715,"12":602,"8":291,"7":3},"2024":{"10":734,"11":798,"12":599,"9":611,"2":548,"8":534,"5":568,"1":524,"6":461,"3":494,"4":489,"7":406}},"SARFET HEALTH CENTER":{"2025":{"1":362,"8":337,"2":298,"9":266,"4":261,"7":247,"10":247,"5":237,"12":222,"11":217,"6":197,"3":116},"2024":{"12":328,"10":308,"7":297,"8":288,"5":240,"11":226,"9":192,"1":185,"6":172,"4":156,"3":158,"2":155},"2023":{"5":266,"1":227,"8":236,"6":198,"7":199,"3":205,"11":183,"2":174,"10":172,"12":155,"9":154,"4":149}},"DIMIT HEALTH CENTER":{"2023":{"10":907,"3":862,"9":877,"2":671,"1":696,"5":697,"12":677,"11":484,"4":653,"8":343,"6":513,"7":420},"2025":{"10":788,"12":672,"9":716,"4":775,"5":656,"11":721,"1":710,"2":580,"3":535,"6":546,"7":378,"8":276},"2024":{"12":717,"9":744,"10":693,"5":564,"11":612,"2":529,"3":618,"4":529,"1":465,"7":319,"6":466,"8":305}},"AYBOT HEALTH CENTER":{"2025":{"12":626,"9":611,"2":553,"10":629,"8":516,"1":556,"11":498,"7":427,"4":521,"6":420,"5":433,"3":495},"2024":{"12":519,"1":691,"9":658,"3":478,"10":594,"7":533,"5":506,"8":494,"2":493,"4":411,"11":413,"6":426},"2023":{"12":699,"11":431,"10":478,"9":96}},"SAWB HEALTH CENTER":{"2023":{"10":510,"9":512,"8":471,"11":433,"3":560,"2":458,"5":474,"12":339,"1":383,"7":363,"6":318,"4":373},"2025":{"10":535,"12":414,"11":399,"2":397,"4":389,"9":357,"1":339,"5":317,"7":282,"8":329,"3":402,"6":269},"2024":{"9":431,"2":388,"12":368,"5":367,"10":389,"11":392,"4":340,"8":365,"7":351,"6":277,"1":258,"3":330}},"BARR BAZOOM HEALTH CENTER":{"2025":{"11":332,"12":316,"10":268,"4":245,"9":236,"5":191,"6":189,"2":186,"1":223,"7":131,"3":99,"8":44},"2024":{"12":271,"10":241,"11":236,"5":212,"4":167,"9":147,"3":124,"6":117,"2":118,"1":98,"7":113,"8":59}},"TOSINAT HEALTH CENTER":{"2025":{"9":410,"10":343,"12":428,"1":408,"5":307,"11":273,"8":270,"4":255,"2":229,"6":192,"3":212,"7":177},"2024":{"1":350,"2":357,"10":383,"12":295,"5":291,"4":333,"3":313,"9":294,"7":268,"11":219,"8":216,"6":263},"2023":{"1":377,"10":453,"11":306,"8":324,"5":336,"7":302,"12":276,"3":317,"9":288,"2":294,"4":270,"6":260}},"AL HALLANIYAT HEALTH CENTER":{"2025":{"12":437,"10":512,"4":445,"3":430,"2":481,"1":410,"11":384,"5":310,"9":207,"8":142,"6":154,"7":163},"2024":{"10":474,"12":387,"5":455,"2":407,"1":335,"11":385,"4":395,"9":307,"3":374,"6":273,"7":153,"8":131},"2023":{"12":257,"8":2}},"MATOURA & JIJWAL HEALTH CENTER":{"2025":{"12":402,"9":431,"11":420,"10":338,"7":319,"6":399,"5":317,"1":330,"4":312,"8":240,"3":224,"2":203},"2023":{"3":674,"10":386,"9":533,"5":451,"11":430,"6":371,"7":308,"12":315,"1":324,"8":291,"4":276,"2":237},"2024":{"9":401,"12":360,"3":371,"10":304,"5":288,"8":278,"11":345,"4":334,"2":279,"1":269,"6":234,"7":214}},"AL MASHASH HEALTH CENTER":{"2023":{"10":228,"11":162,"3":187,"2":125,"4":139,"5":101,"12":109,"1":113,"8":58,"9":78,"6":60,"7":50},"2024":{"12":190,"11":181,"1":131,"10":135,"3":182,"5":122,"4":116,"2":120,"6":73,"7":33,"8":33},"2025":{"5":144,"3":146,"4":120,"2":91,"1":88,"6":71,"8":58,"9":45,"7":17}},"BITHNAH HEALTH CENTER":{"2025":{"10":152,"12":190,"4":145,"11":149,"5":140,"1":145,"2":104,"3":108,"9":85,"6":67,"8":42,"7":30},"2024":{"12":180,"2":194,"10":140,"5":134,"4":166,"3":144,"11":102,"9":86,"1":113,"8":64,"7":53,"6":60},"2023":{"10":166,"11":148,"3":131,"12":180,"9":106,"5":85,"1":83,"7":73,"2":69,"8":49,"4":83,"6":28}},"AL HASHMAN HEALTH CENTER":{"2025":{"10":135,"12":144,"7":108,"11":119,"1":113,"8":88,"5":110,"9":102,"3":110,"4":78,"2":70,"6":70},"2024":{"12":187,"10":124,"11":157,"5":78,"3":67,"4":63,"8":92,"2":74,"7":59,"9":84,"6":57,"1":59},"2023":{"12":102,"8":68,"11":101,"7":72,"3":93,"9":60,"1":77,"5":69,"2":66,"10":72,"4":78,"6":51}}},
+  by_wil_enc_year:{"SALALAH":{"OPD":{"2023":1142604,"2024":1129621,"2025":1114598},"ANE":{"2023":109803,"2024":84775,"2025":79693},"COMMUNITY":{"2025":2966,"2024":877,"2023":123}},"AL MAZYUNAH":{"OPD":{"2023":129642,"2024":123028,"2025":130542},"ANE":{"2024":1356,"2025":3111,"2023":303},"COMMUNITY":{"2025":124,"2024":50,"2023":40}},"TAQAH":{"OPD":{"2023":152485,"2024":143923,"2025":148211},"COMMUNITY":{"2024":536,"2025":395,"2023":388},"ANE":{"2025":485,"2024":373,"2023":478}},"MIRBAT":{"OPD":{"2025":112809,"2023":105110,"2024":107893},"ANE":{"2023":1971,"2025":1200,"2024":814},"COMMUNITY":{"2023":189,"2024":34,"2025":130}},"THUMRAYT":{"OPD":{"2024":93504,"2025":87325,"2023":84759},"ANE":{"2023":754,"2024":643,"2025":521},"COMMUNITY":{"2023":47,"2024":22,"2025":19}},"RAKHYUT":{"OPD":{"2024":37444,"2023":35094,"2025":40233},"ANE":{"2024":189,"2023":179,"2025":152},"COMMUNITY":{"2024":17,"2025":14,"2023":28}},"SADAH":{"OPD":{"2024":51984,"2023":50655,"2025":52958},"ANE":{"2025":1299,"2024":1005,"2023":363},"COMMUNITY":{"2025":167,"2024":45,"2023":30}},"SHALIM WA JUZUR AL HALLANIYAT":{"OPD":{"2025":65058,"2023":62945,"2024":63032},"ANE":{"2023":468,"2025":112,"2024":163},"COMMUNITY":{"2023":57,"2024":2,"2025":7}},"DALKUT":{"OPD":{"2025":33219,"2024":30711,"2023":31077},"COMMUNITY":{"2023":42,"2024":26,"2025":21},"ANE":{"2025":100,"2024":102,"2023":130}},"MAQSHIN":{"OPD":{"2025":7386,"2023":8933,"2024":6166},"ANE":{"2024":73,"2023":42,"2025":72},"COMMUNITY":{"2024":6,"2023":8,"2025":4}}},
+  by_estab_enc_year:{"AS SAADAH HEALTH CENTER":{"OPD":{"2023":274427,"2024":250609,"2025":234773},"COMMUNITY":{"2025":805,"2023":28,"2024":53},"ANE":{"2024":489,"2023":476,"2025":438}},"SALALAH AL GHARBIA HEALTH CENTER":{"OPD":{"2024":175319,"2025":140082,"2023":202579},"COMMUNITY":{"2025":372,"2024":40,"2023":1},"ANE":{"2025":2,"2023":1}},"AWQAD HEALTH CENTER":{"OPD":{"2023":194568,"2024":165883,"2025":143362},"COMMUNITY":{"2025":975,"2024":693,"2023":38},"ANE":{"2023":7,"2024":7,"2025":7}},"AS SULTAN QABOOS HOSPITAL":{"OPD":{"2024":360015,"2025":420278,"2023":297561},"ANE":{"2023":109234,"2024":84217,"2025":79185}},"SALALAH AL JADIDAH HEALTH CENTER":{"OPD":{"2023":70535,"2024":71153,"2025":70257},"COMMUNITY":{"2025":414,"2024":61,"2023":30},"ANE":{"2023":51,"2024":37,"2025":4}},"AL DAHAREEZ HEALTH CENTER":{"OPD":{"2025":68877,"2024":70462,"2023":64822},"COMMUNITY":{"2025":394,"2023":8,"2024":20},"ANE":{"2024":9,"2025":15,"2023":8}},"AL MAZYUNAH HOSPITAL":{"OPD":{"2023":85720,"2024":90484,"2025":98419},"ANE":{"2024":1326,"2025":3082,"2023":271},"COMMUNITY":{"2025":96,"2023":11,"2024":1}},"TAQAH HOSPITAL":{"OPD":{"2023":92424,"2024":88548,"2025":92057},"COMMUNITY":{"2024":486,"2025":375,"2023":332},"ANE":{"2025":403,"2024":303,"2023":380}},"MIRBAT HOSPITAL":{"OPD":{"2025":83035,"2023":75124,"2024":77431},"COMMUNITY":{"2023":177,"2024":34,"2025":129},"ANE":{"2025":473,"2024":290,"2023":191}},"THUMRAYT HOSPITAL":{"OPD":{"2024":66142,"2025":58895,"2023":67672},"ANE":{"2023":746,"2024":612,"2025":510},"COMMUNITY":{"2023":16}},"MADINAT AL HAQQ HOSPITAL":{"OPD":{"2023":48086,"2024":43969,"2025":44493},"COMMUNITY":{"2024":43,"2023":39,"2025":6},"ANE":{"2023":95,"2024":62,"2025":67}},"SHAHB ASAYB HEALTH CENTER":{"OPD":{"2024":31303,"2023":27684,"2025":32816},"ANE":{"2024":183,"2023":174,"2025":150},"COMMUNITY":{"2024":17,"2025":14,"2023":20}},"QAYRUN HAYRITI HEALTH CENTER":{"OPD":{"2023":23588,"2025":23925,"2024":22855},"ANE":{"2025":35,"2023":17,"2024":15}},"TAWI ATAYR HOSPITAL":{"OPD":{"2023":29986,"2024":30462,"2025":29774},"ANE":{"2023":1780,"2025":727,"2024":524},"COMMUNITY":{"2023":12,"2025":1}},"SADAH HOSPITAL":{"OPD":{"2024":25795,"2023":24521,"2025":27004},"ANE":{"2025":1276,"2024":985,"2023":347},"COMMUNITY":{"2025":127,"2024":19}},"SHALIM HOSPITAL":{"OPD":{"2025":28685,"2023":26278,"2024":26606},"ANE":{"2023":398,"2025":84,"2024":137},"COMMUNITY":{"2023":24,"2024":2}},"TITAM HEALTH CENTER":{"OPD":{"2024":10608,"2023":11685,"2025":10470},"COMMUNITY":{"2023":17,"2024":10,"2025":6},"ANE":{"2023":9,"2025":7,"2024":1}},"DALKUT HEALTH CENTER":{"OPD":{"2025":20163,"2024":19432,"2023":19431},"ANE":{"2025":63,"2024":74,"2023":91},"COMMUNITY":{"2024":7,"2025":11,"2023":18}},"ASH SHUWAYMIYAH HEALTH CENTER":{"OPD":{"2023":12479,"2024":10809,"2025":10562},"COMMUNITY":{"2023":9},"ANE":{"2023":20,"2024":11,"2025":3}},"HARWIB HEALTH CENTER":{"OPD":{"2023":15213,"2025":7191,"2024":8239},"ANE":{"2023":16,"2024":15,"2025":14}},"ANDAT HEALTH CENTER":{"OPD":{"2023":12562,"2024":10200,"2025":9520},"COMMUNITY":{"2024":34,"2023":15,"2025":16},"ANE":{"2025":6,"2023":3,"2024":5}},"MUQSHIN HOSPITAL":{"OPD":{"2025":6608,"2023":7526,"2024":4855},"ANE":{"2024":73,"2023":42,"2025":72},"COMMUNITY":{"2023":5,"2024":1,"2025":2}},"MUDAYY HEALTH CENTER":{"OPD":{"2024":9962,"2023":9891,"2025":10211},"ANE":{"2024":29,"2023":7,"2025":10},"COMMUNITY":{"2023":11,"2024":2,"2025":5}},"JIBJAT HEALTH CENTER":{"OPD":{"2023":11975,"2025":11661,"2024":11406},"COMMUNITY":{"2025":14,"2023":17,"2024":7},"ANE":{"2025":15,"2023":3,"2024":8}},"HASIK HEALTH CENTER":{"OPD":{"2023":12404,"2025":11975,"2024":11899},"COMMUNITY":{"2025":22,"2023":11,"2024":8},"ANE":{"2024":7,"2025":6,"2023":7}},"HADBIN HEALTH CENTER":{"OPD":{"2024":10042,"2025":9553,"2023":8537},"COMMUNITY":{"2024":18,"2025":18,"2023":19},"ANE":{"2025":14,"2024":5,"2023":8}},"KHADRAFI HEALTH CENTER":{"OPD":{"2025":10063,"2023":9345,"2024":8589},"COMMUNITY":{"2023":23,"2024":8,"2025":7},"ANE":{"2023":23,"2024":24,"2025":26}},"RAKHYUT HOSPITAL":{"OPD":{"2025":7417,"2024":6141,"2023":7410},"COMMUNITY":{"2023":8},"ANE":{"2024":6,"2023":5,"2025":2}},"MITN HEALTH CENTER":{"OPD":{"2023":7762,"2025":7985,"2024":6860},"ANE":{"2023":13,"2024":10,"2025":9},"COMMUNITY":{"2024":1}},"HEJAYF HEALTH CENTER":{"OPD":{"2024":2717,"2023":2839,"2025":2574},"COMMUNITY":{"2023":1}},"KUBUT HEALTH CENTER":{"OPD":{"2025":8775,"2024":9342,"2023":9459},"ANE":{"2025":3,"2023":4,"2024":3},"COMMUNITY":{"2023":1,"2025":1}},"SHARBTHAT HEALTH CENTER":{"OPD":{"2023":6701,"2025":5622,"2024":5644},"ANE":{"2025":14,"2023":33,"2024":6},"COMMUNITY":{"2023":5}},"DHAHBUN HEALTH CENTER":{"OPD":{"2025":6884,"2023":3398,"2024":6764},"COMMUNITY":{"2023":4},"ANE":{"2023":1,"2024":2,"2025":1}},"SARFET HEALTH CENTER":{"OPD":{"2025":2993,"2024":2690,"2023":2301},"ANE":{"2023":16,"2025":11,"2024":4},"COMMUNITY":{"2024":11,"2023":1,"2025":3}},"DIMIT HEALTH CENTER":{"OPD":{"2023":7770,"2025":7352,"2024":6559},"ANE":{"2023":12,"2024":2,"2025":1},"COMMUNITY":{"2023":18}},"AYBOT HEALTH CENTER":{"OPD":{"2025":6272,"2024":6198,"2023":1701},"COMMUNITY":{"2024":18,"2023":3,"2025":13}},"SAWB HEALTH CENTER":{"OPD":{"2023":5193,"2025":4426,"2024":4248},"ANE":{"2024":8,"2025":3,"2023":1}},"BARR BAZOOM HEALTH CENTER":{"OPD":{"2025":2460,"2024":1903}},"TOSINAT HEALTH CENTER":{"OPD":{"2025":3494,"2024":3570,"2023":3795},"COMMUNITY":{"2025":10,"2023":8,"2024":12}},"AL HALLANIYAT HEALTH CENTER":{"OPD":{"2025":4062,"2024":4072,"2023":258},"ANE":{"2025":7,"2023":1,"2024":4},"COMMUNITY":{"2025":6}},"MATOURA & JIJWAL HEALTH CENTER":{"OPD":{"2025":3933,"2023":4590,"2024":3675},"COMMUNITY":{"2023":6,"2024":2,"2025":2}},"AL MASHASH HEALTH CENTER":{"OPD":{"2023":1407,"2024":1311,"2025":778},"COMMUNITY":{"2024":5,"2023":3,"2025":2}},"BITHNAH HEALTH CENTER":{"OPD":{"2025":1357,"2024":1435,"2023":1189},"COMMUNITY":{"2023":12,"2024":1}},"AL HASHMAN HEALTH CENTER":{"OPD":{"2025":1246,"2024":1100,"2023":908},"COMMUNITY":{"2023":1,"2024":1,"2025":1}}},
+  by_wil_shift_year:{"SALALAH":{"1ST SHIFT (MORNING)":{"2023":687783,"2024":688367,"2025":686029},"2nd SHIFT (AFTERNOON)":{"2023":348177,"2025":341120,"2024":341443},"3RD SHIFT (NIGHT)":{"2024":185463,"2023":216570,"2025":170108}},"AL MAZYUNAH":{"1ST SHIFT (MORNING)":{"2023":60642,"2024":58486,"2025":63483},"2nd SHIFT (AFTERNOON)":{"2023":54530,"2024":48599,"2025":48446},"3RD SHIFT (NIGHT)":{"2025":21848,"2023":14813,"2024":17349}},"TAQAH":{"2nd SHIFT (AFTERNOON)":{"2023":56327,"2025":52706,"2024":51194},"1ST SHIFT (MORNING)":{"2023":72145,"2024":70350,"2025":71510},"3RD SHIFT (NIGHT)":{"2025":24875,"2023":24879,"2024":23288}},"MIRBAT":{"2nd SHIFT (AFTERNOON)":{"2025":43425,"2023":40803,"2024":42295},"1ST SHIFT (MORNING)":{"2024":48739,"2023":47701,"2025":52075},"3RD SHIFT (NIGHT)":{"2025":18639,"2024":17707,"2023":18766}},"THUMRAYT":{"1ST SHIFT (MORNING)":{"2024":41748,"2025":46481,"2023":36150},"2nd SHIFT (AFTERNOON)":{"2024":37738,"2023":33381,"2025":35367},"3RD SHIFT (NIGHT)":{"2024":14683,"2023":16029,"2025":6017}},"RAKHYUT":{"1ST SHIFT (MORNING)":{"2024":21275,"2023":19429,"2025":22727},"2nd SHIFT (AFTERNOON)":{"2024":14253,"2025":15489,"2023":12662},"3RD SHIFT (NIGHT)":{"2025":2183,"2024":2122,"2023":3210}},"SADAH":{"1ST SHIFT (MORNING)":{"2024":24762,"2023":23840,"2025":25746},"2nd SHIFT (AFTERNOON)":{"2024":21957,"2025":22620,"2023":20431},"3RD SHIFT (NIGHT)":{"2025":6058,"2024":6315,"2023":6777}},"SHALIM WA JUZUR AL HALLANIYAT":{"1ST SHIFT (MORNING)":{"2025":29125,"2023":28583,"2024":27378},"2nd SHIFT (AFTERNOON)":{"2023":27726,"2024":28558,"2025":29394},"3RD SHIFT (NIGHT)":{"2025":6658,"2024":7261,"2023":7161}},"DALKUT":{"1ST SHIFT (MORNING)":{"2025":15299,"2024":14296,"2023":14544},"2nd SHIFT (AFTERNOON)":{"2025":13379,"2024":12385,"2023":12257},"3RD SHIFT (NIGHT)":{"2025":4662,"2023":4448,"2024":4158}},"MAQSHIN":{"1ST SHIFT (MORNING)":{"2025":6000,"2023":6109,"2024":5147},"2nd SHIFT (AFTERNOON)":{"2023":2505,"2025":1285,"2024":929},"3RD SHIFT (NIGHT)":{"2024":169,"2023":369,"2025":177}}},
+  by_estab_shift_year:{"AS SAADAH HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":98925,"2024":93329,"2025":87721},"2nd SHIFT (AFTERNOON)":{"2023":106140,"2025":85340,"2024":92352},"3RD SHIFT (NIGHT)":{"2023":69866,"2024":65470,"2025":62955}},"SALALAH AL GHARBIA HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2024":79161,"2025":78549,"2023":72928},"2nd SHIFT (AFTERNOON)":{"2023":69921,"2024":69071,"2025":59204},"3RD SHIFT (NIGHT)":{"2023":59732,"2024":27127,"2025":2703}},"AWQAD HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":75394,"2024":75529,"2025":76697},"2nd SHIFT (AFTERNOON)":{"2023":76472,"2024":70605,"2025":64862},"3RD SHIFT (NIGHT)":{"2023":42747,"2024":20449,"2025":2785}},"AS SULTAN QABOOS HOSPITAL":{"3RD SHIFT (NIGHT)":{"2024":70244,"2025":99894,"2023":42064},"2nd SHIFT (AFTERNOON)":{"2025":74920,"2024":51763,"2023":39592},"1ST SHIFT (MORNING)":{"2023":325139,"2024":322225,"2025":324649}},"SALALAH AL JADIDAH HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":50017,"2024":48934,"2025":49354},"2nd SHIFT (AFTERNOON)":{"2024":21326,"2023":19625,"2025":20503},"3RD SHIFT (NIGHT)":{"2025":818,"2024":991,"2023":974}},"AL DAHAREEZ HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":47903,"2024":48361,"2023":45667},"2nd SHIFT (AFTERNOON)":{"2025":20593,"2023":18167,"2024":21070},"3RD SHIFT (NIGHT)":{"2025":790,"2024":1060,"2023":1004}},"AL MAZYUNAH HOSPITAL":{"1ST SHIFT (MORNING)":{"2023":40771,"2024":41880,"2025":46628},"2nd SHIFT (AFTERNOON)":{"2023":33642,"2024":34134,"2025":34729},"3RD SHIFT (NIGHT)":{"2025":20240,"2023":11589,"2024":15797}},"TAQAH HOSPITAL":{"2nd SHIFT (AFTERNOON)":{"2023":34929,"2025":31911,"2024":31723},"1ST SHIFT (MORNING)":{"2023":39291,"2024":39254,"2025":41745},"3RD SHIFT (NIGHT)":{"2025":19179,"2023":18916,"2024":18360}},"MIRBAT HOSPITAL":{"2nd SHIFT (AFTERNOON)":{"2025":30733,"2023":28409,"2024":29357},"1ST SHIFT (MORNING)":{"2024":33836,"2023":32635,"2025":37517},"3RD SHIFT (NIGHT)":{"2025":15387,"2024":14562,"2023":14448}},"THUMRAYT HOSPITAL":{"1ST SHIFT (MORNING)":{"2024":29251,"2025":33259,"2023":28959},"2nd SHIFT (AFTERNOON)":{"2024":23818,"2023":24348,"2025":21264},"3RD SHIFT (NIGHT)":{"2024":13685,"2023":15127,"2025":4882}},"MADINAT AL HAQQ HOSPITAL":{"1ST SHIFT (MORNING)":{"2023":26237,"2024":24676,"2025":23941},"2nd SHIFT (AFTERNOON)":{"2023":16188,"2025":15030,"2024":14552},"3RD SHIFT (NIGHT)":{"2023":5795,"2025":5595,"2024":4846}},"SHAHB ASAYB HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2024":17427,"2023":15625,"2025":17578},"2nd SHIFT (AFTERNOON)":{"2024":12445,"2025":13620,"2023":10671},"3RD SHIFT (NIGHT)":{"2025":1782,"2024":1631,"2023":1582}},"QAYRUN HAYRITI HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2023":13516,"2025":12770,"2024":11986},"1ST SHIFT (MORNING)":{"2023":9927,"2024":10794,"2025":11063},"3RD SHIFT (NIGHT)":{"2025":127,"2023":162,"2024":90}},"TAWI ATAYR HOSPITAL":{"1ST SHIFT (MORNING)":{"2023":15066,"2024":14903,"2025":14558},"2nd SHIFT (AFTERNOON)":{"2023":12394,"2025":12692,"2024":12938},"3RD SHIFT (NIGHT)":{"2025":3252,"2023":4318,"2024":3145}},"SADAH HOSPITAL":{"1ST SHIFT (MORNING)":{"2024":12639,"2023":11788,"2025":13984},"2nd SHIFT (AFTERNOON)":{"2024":9238,"2025":9624,"2023":8184},"3RD SHIFT (NIGHT)":{"2025":4799,"2024":4922,"2023":4896}},"SHALIM HOSPITAL":{"1ST SHIFT (MORNING)":{"2025":12983,"2023":11730,"2024":11040},"2nd SHIFT (AFTERNOON)":{"2023":9957,"2024":10227,"2025":10620},"3RD SHIFT (NIGHT)":{"2025":5166,"2024":5478,"2023":5013}},"TITAM HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2024":7317,"2023":6946,"2025":7519},"2nd SHIFT (AFTERNOON)":{"2023":4744,"2024":3270,"2025":2928},"3RD SHIFT (NIGHT)":{"2025":36,"2024":32,"2023":21}},"DALKUT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":7355,"2024":7374,"2023":7700},"2nd SHIFT (AFTERNOON)":{"2025":8598,"2024":8175,"2023":7846},"3RD SHIFT (NIGHT)":{"2025":4284,"2023":3994,"2024":3964}},"ASH SHUWAYMIYAH HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":6508,"2024":5697,"2025":5056},"2nd SHIFT (AFTERNOON)":{"2023":5398,"2024":4713,"2025":5187},"3RD SHIFT (NIGHT)":{"2025":322,"2023":602,"2024":410}},"HARWIB HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":7035,"2025":5478,"2024":5390},"2nd SHIFT (AFTERNOON)":{"2023":6655,"2024":2572,"2025":1605},"3RD SHIFT (NIGHT)":{"2023":1539,"2024":292,"2025":122}},"ANDAT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":5872,"2024":4921,"2025":4573},"2nd SHIFT (AFTERNOON)":{"2023":6199,"2025":4588,"2024":4885},"3RD SHIFT (NIGHT)":{"2023":509,"2025":381,"2024":433}},"MUQSHIN HOSPITAL":{"1ST SHIFT (MORNING)":{"2025":5516,"2023":5201,"2024":4216},"2nd SHIFT (AFTERNOON)":{"2023":2088,"2025":1034,"2024":611},"3RD SHIFT (NIGHT)":{"2024":102,"2023":284,"2025":132}},"MUDAYY HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2024":4869,"2025":4204,"2023":3702},"2nd SHIFT (AFTERNOON)":{"2023":5596,"2025":5601,"2024":4831},"3RD SHIFT (NIGHT)":{"2025":421,"2023":611,"2024":293}},"JIBJAT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":6617,"2025":5824,"2024":6420},"2nd SHIFT (AFTERNOON)":{"2023":5210,"2024":4919,"2025":5765},"3RD SHIFT (NIGHT)":{"2025":101,"2023":168,"2024":82}},"HASIK HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":5471,"2025":5151,"2024":5316},"2nd SHIFT (AFTERNOON)":{"2025":6078,"2023":5914,"2024":5857},"3RD SHIFT (NIGHT)":{"2025":774,"2023":1037,"2024":741}},"HADBIN HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2024":5111,"2025":4861,"2023":3900},"1ST SHIFT (MORNING)":{"2024":4465,"2025":4381,"2023":4107},"3RD SHIFT (NIGHT)":{"2025":343,"2024":489,"2023":557}},"KHADRAFI HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":4992,"2023":4648,"2024":4271},"2nd SHIFT (AFTERNOON)":{"2025":4726,"2023":4289,"2024":4156},"3RD SHIFT (NIGHT)":{"2025":378,"2023":454,"2024":194}},"RAKHYUT HOSPITAL":{"1ST SHIFT (MORNING)":{"2025":5149,"2024":3848,"2023":3804},"2nd SHIFT (AFTERNOON)":{"2024":1808,"2025":1869,"2023":1991},"3RD SHIFT (NIGHT)":{"2023":1628,"2025":401,"2024":491}},"MITN HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":3436,"2025":3356,"2024":3094},"2nd SHIFT (AFTERNOON)":{"2025":3918,"2024":3460,"2023":3999},"3RD SHIFT (NIGHT)":{"2025":720,"2023":340,"2024":317}},"HEJAYF HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2024":2717,"2023":2840,"2025":2574}},"KUBUT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2025":5134,"2024":5339,"2023":5133},"1ST SHIFT (MORNING)":{"2024":3806,"2025":3444,"2023":3911},"3RD SHIFT (NIGHT)":{"2023":420,"2025":201,"2024":200}},"SHARBTHAT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":3242,"2025":2719,"2024":2550},"2nd SHIFT (AFTERNOON)":{"2023":3175,"2024":2857,"2025":2655},"3RD SHIFT (NIGHT)":{"2025":262,"2023":322,"2024":243}},"DHAHBUN HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":3119,"2023":1326,"2024":2438},"2nd SHIFT (AFTERNOON)":{"2023":1935,"2024":4072,"2025":3643},"3RD SHIFT (NIGHT)":{"2024":256,"2025":123,"2023":142}},"SARFET HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":2952,"2024":2651,"2023":2196},"2nd SHIFT (AFTERNOON)":{"2023":122,"2024":54,"2025":55}},"DIMIT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2023":3960,"2024":3658,"2025":3880},"1ST SHIFT (MORNING)":{"2025":3053,"2023":3044,"2024":2300},"3RD SHIFT (NIGHT)":{"2023":796,"2024":603,"2025":420}},"AYBOT HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2025":3848,"2024":4004,"2023":843},"1ST SHIFT (MORNING)":{"2023":845,"2024":1990,"2025":2044},"3RD SHIFT (NIGHT)":{"2025":393,"2024":222,"2023":16}},"SAWB HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":2474,"2025":2230,"2024":2342},"2nd SHIFT (AFTERNOON)":{"2023":2433,"2024":1751,"2025":2057},"3RD SHIFT (NIGHT)":{"2025":142,"2024":163,"2023":287}},"BARR BAZOOM HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":2286,"2024":1703},"2nd SHIFT (AFTERNOON)":{"2025":161,"2024":200},"3RD SHIFT (NIGHT)":{"2025":13}},"TOSINAT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":2020,"2024":1917,"2023":1973},"2nd SHIFT (AFTERNOON)":{"2023":1724,"2025":1356,"2024":1574},"3RD SHIFT (NIGHT)":{"2025":128,"2024":91,"2023":106}},"AL HALLANIYAT HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":1870,"2024":1985,"2023":148},"2nd SHIFT (AFTERNOON)":{"2025":1918,"2024":1764,"2023":103},"3RD SHIFT (NIGHT)":{"2025":287,"2024":327,"2023":8}},"MATOURA & JIJWAL HEALTH CENTER":{"2nd SHIFT (AFTERNOON)":{"2025":2250,"2023":2311,"2024":1974},"1ST SHIFT (MORNING)":{"2024":1284,"2025":1428,"2023":1555},"3RD SHIFT (NIGHT)":{"2023":730,"2024":419,"2025":257}},"AL MASHASH HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2023":908,"2024":931,"2025":484},"2nd SHIFT (AFTERNOON)":{"2023":417,"2025":251,"2024":318},"3RD SHIFT (NIGHT)":{"2023":85,"2024":67,"2025":45}},"BITHNAH HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":909,"2024":948,"2023":835},"2nd SHIFT (AFTERNOON)":{"2024":368,"2025":380,"2023":295},"3RD SHIFT (NIGHT)":{"2025":68,"2024":120,"2023":71}},"AL HASHMAN HEALTH CENTER":{"1ST SHIFT (MORNING)":{"2025":660,"2024":549,"2023":483},"2nd SHIFT (AFTERNOON)":{"2024":445,"2025":470,"2023":364},"3RD SHIFT (NIGHT)":{"2025":117,"2023":62,"2024":107}}},
+  by_wil_holiday_year:{"SALALAH":{"WORKING DAY":{"2023":1054385,"2024":1031634,"2025":1021030},"HOLIDAY":{"2023":198145,"2024":183639,"2025":176227}},"AL MAZYUNAH":{"WORKING DAY":{"2023":104250,"2024":101521,"2025":107848},"HOLIDAY":{"2023":25735,"2025":25929,"2024":22913}},"TAQAH":{"WORKING DAY":{"2023":120161,"2024":115667,"2025":118676},"HOLIDAY":{"2023":33190,"2025":30415,"2024":29165}},"MIRBAT":{"WORKING DAY":{"2025":89779,"2023":82611,"2024":84672},"HOLIDAY":{"2024":24069,"2023":24659,"2025":24360}},"THUMRAYT":{"WORKING DAY":{"2024":74818,"2025":72281,"2023":65701},"HOLIDAY":{"2023":19859,"2024":19351,"2025":15584}},"RAKHYUT":{"WORKING DAY":{"2024":29813,"2023":27910,"2025":31527},"HOLIDAY":{"2025":8872,"2023":7391,"2024":7837}},"SADAH":{"WORKING DAY":{"2024":43218,"2023":40213,"2025":43760},"HOLIDAY":{"2024":9816,"2025":10664,"2023":10835}},"SHALIM WA JUZUR AL HALLANIYAT":{"WORKING DAY":{"2025":49925,"2023":47969,"2024":47898},"HOLIDAY":{"2024":15299,"2023":15501,"2025":15252}},"DALKUT":{"WORKING DAY":{"2025":25140,"2024":23174,"2023":23612},"HOLIDAY":{"2025":8200,"2024":7665,"2023":7637}},"MAQSHIN":{"WORKING DAY":{"2025":7070,"2023":7471,"2024":5786},"HOLIDAY":{"2023":1512,"2025":392,"2024":459}}},
+  by_estab_holiday_year:{"AS SAADAH HEALTH CENTER":{"WORKING DAY":{"2023":211510,"2024":193999,"2025":181738},"HOLIDAY":{"2023":63421,"2024":57152,"2025":54278}},"SALALAH AL GHARBIA HEALTH CENTER":{"WORKING DAY":{"2024":137973,"2025":115778,"2023":154982},"HOLIDAY":{"2023":47599,"2024":37386,"2025":24678}},"AWQAD HEALTH CENTER":{"WORKING DAY":{"2023":154385,"2024":134089,"2025":120480},"HOLIDAY":{"2023":40228,"2024":32494,"2025":23864}},"AS SULTAN QABOOS HOSPITAL":{"WORKING DAY":{"2024":398412,"2025":435942,"2023":371625},"HOLIDAY":{"2024":45820,"2025":63521,"2023":35170}},"SALALAH AL JADIDAH HEALTH CENTER":{"WORKING DAY":{"2023":66765,"2024":67374,"2025":67498},"HOLIDAY":{"2024":3877,"2023":3851,"2025":3177}},"AL DAHAREEZ HEALTH CENTER":{"WORKING DAY":{"2025":65409,"2024":66232,"2023":61139},"HOLIDAY":{"2024":4259,"2025":3877,"2023":3699}},"AL MAZYUNAH HOSPITAL":{"WORKING DAY":{"2023":69137,"2024":73019,"2025":79568},"HOLIDAY":{"2023":16865,"2025":22029,"2024":18792}},"TAQAH HOSPITAL":{"WORKING DAY":{"2023":72424,"2024":71013,"2025":73440},"HOLIDAY":{"2023":20712,"2025":19395,"2024":18324}},"MIRBAT HOSPITAL":{"WORKING DAY":{"2025":65391,"2023":57616,"2024":59843},"HOLIDAY":{"2024":17912,"2023":17876,"2025":18246}},"THUMRAYT HOSPITAL":{"WORKING DAY":{"2024":52899,"2025":49614,"2023":52544},"HOLIDAY":{"2023":15890,"2024":13855,"2025":9791}},"MADINAT AL HAQQ HOSPITAL":{"WORKING DAY":{"2023":38707,"2024":35823,"2025":35781},"HOLIDAY":{"2023":9513,"2024":8251,"2025":8785}},"SHAHB ASAYB HEALTH CENTER":{"WORKING DAY":{"2024":25042,"2023":22143,"2025":25743},"HOLIDAY":{"2025":7237,"2023":5735,"2024":6461}},"QAYRUN HAYRITI HEALTH CENTER":{"WORKING DAY":{"2023":20504,"2025":21240,"2024":20337},"HOLIDAY":{"2023":3101,"2025":2720,"2024":2533}},"TAWI ATAYR HOSPITAL":{"WORKING DAY":{"2023":24995,"2024":24829,"2025":24388},"HOLIDAY":{"2023":6783,"2024":6157,"2025":6114}},"SADAH HOSPITAL":{"WORKING DAY":{"2024":22058,"2023":20033,"2025":23357},"HOLIDAY":{"2024":4741,"2025":5050,"2023":4835}},"SHALIM HOSPITAL":{"WORKING DAY":{"2025":21934,"2023":20109,"2024":19945},"HOLIDAY":{"2024":6800,"2023":6591,"2025":6835}},"TITAM HEALTH CENTER":{"WORKING DAY":{"2024":10501,"2023":10635,"2025":10371},"HOLIDAY":{"2023":1076,"2025":112,"2024":118}},"DALKUT HEALTH CENTER":{"WORKING DAY":{"2025":14896,"2024":14365,"2023":14475},"HOLIDAY":{"2025":5341,"2024":5148,"2023":5065}},"ASH SHUWAYMIYAH HEALTH CENTER":{"WORKING DAY":{"2023":9859,"2024":8599,"2025":8413},"HOLIDAY":{"2024":2221,"2023":2649,"2025":2152}},"HARWIB HEALTH CENTER":{"WORKING DAY":{"2023":11558,"2025":6968,"2024":7412},"HOLIDAY":{"2023":3671,"2024":842,"2025":237}},"ANDAT HEALTH CENTER":{"WORKING DAY":{"2023":9876,"2024":8261,"2025":7601},"HOLIDAY":{"2023":2704,"2025":1941,"2024":1978}},"MUQSHIN HOSPITAL":{"WORKING DAY":{"2025":6447,"2023":6313,"2024":4674},"HOLIDAY":{"2023":1260,"2025":235,"2024":255}},"MUDAYY HEALTH CENTER":{"WORKING DAY":{"2024":8079,"2023":7423,"2025":7983},"HOLIDAY":{"2023":2486,"2025":2243,"2024":1914}},"JIBJAT HEALTH CENTER":{"WORKING DAY":{"2023":9030,"2025":9455,"2024":8831},"HOLIDAY":{"2023":2965,"2024":2590,"2025":2235}},"HASIK HEALTH CENTER":{"WORKING DAY":{"2023":9097,"2025":8891,"2024":8841},"HOLIDAY":{"2024":3073,"2023":3325,"2025":3112}},"HADBIN HEALTH CENTER":{"WORKING DAY":{"2024":8150,"2025":7721,"2023":6536},"HOLIDAY":{"2024":1915,"2025":1864,"2023":2028}},"KHADRAFI HEALTH CENTER":{"WORKING DAY":{"2025":7237,"2023":6819,"2024":6104},"HOLIDAY":{"2025":2859,"2023":2572,"2024":2517}},"RAKHYUT HOSPITAL":{"WORKING DAY":{"2025":5784,"2024":4771,"2023":5767},"HOLIDAY":{"2024":1376,"2025":1635,"2023":1656}},"MITN HEALTH CENTER":{"WORKING DAY":{"2023":6868,"2025":7111,"2024":6512},"HOLIDAY":{"2023":907,"2025":883,"2024":359}},"HEJAYF HEALTH CENTER":{"WORKING DAY":{"2024":2717,"2023":2840,"2025":2574}},"KUBUT HEALTH CENTER":{"WORKING DAY":{"2025":6263,"2024":6570,"2023":6765},"HOLIDAY":{"2025":2516,"2024":2775,"2023":2699}},"SHARBTHAT HEALTH CENTER":{"WORKING DAY":{"2023":5381,"2025":4503,"2024":4468},"HOLIDAY":{"2023":1358,"2024":1182,"2025":1133}},"DHAHBUN HEALTH CENTER":{"WORKING DAY":{"2025":5638,"2023":2573,"2024":5290},"HOLIDAY":{"2024":1476,"2023":830,"2025":1247}},"SARFET HEALTH CENTER":{"WORKING DAY":{"2025":3007,"2024":2705,"2023":2318}},"DIMIT HEALTH CENTER":{"WORKING DAY":{"2023":5612,"2025":5395,"2024":4886},"HOLIDAY":{"2025":1958,"2023":2188,"2024":1675}},"AYBOT HEALTH CENTER":{"WORKING DAY":{"2025":4527,"2024":4603,"2023":1461},"HOLIDAY":{"2024":1613,"2023":243,"2025":1758}},"SAWB HEALTH CENTER":{"WORKING DAY":{"2023":4547,"2025":3791,"2024":4169},"HOLIDAY":{"2023":647,"2025":638,"2024":87}},"BARR BAZOOM HEALTH CENTER":{"WORKING DAY":{"2025":2459,"2024":1900},"HOLIDAY":{"2024":3,"2025":1}},"TOSINAT HEALTH CENTER":{"WORKING DAY":{"2025":3348,"2024":3336,"2023":3406},"HOLIDAY":{"2024":246,"2023":397,"2025":156}},"AL HALLANIYAT HEALTH CENTER":{"WORKING DAY":{"2025":3417,"2024":3430,"2023":243},"HOLIDAY":{"2025":658,"2024":646,"2023":16}},"MATOURA & JIJWAL HEALTH CENTER":{"WORKING DAY":{"2025":3252,"2023":3405,"2024":2981},"HOLIDAY":{"2023":1191,"2025":683,"2024":696}},"AL MASHASH HEALTH CENTER":{"WORKING DAY":{"2023":1158,"2024":1112,"2025":623},"HOLIDAY":{"2025":157,"2023":252,"2024":204}},"BITHNAH HEALTH CENTER":{"WORKING DAY":{"2025":1119,"2024":1190,"2023":1027},"HOLIDAY":{"2023":174,"2025":238,"2024":246}},"AL HASHMAN HEALTH CENTER":{"WORKING DAY":{"2025":941,"2024":857,"2023":673},"HOLIDAY":{"2023":236,"2025":306,"2024":244}}}
+};
+const MONTHS_AR = ['','يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const MONTHS_EN = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const WILAYAT_AR = {
+  'SALALAH':'صلالة','AL MAZYUNAH':'المزيونة','TAQAH':'طاقة','MIRBAT':'مرباط',
+  'THUMRAYT':'ثمريت','RAKHYUT':'رخيوت','SADAH':'سدح',
+  'SHALIM WA JUZUR AL HALLANIYAT':'شليم وجزر الحلانيات','DALKUT':'دلكوت','MAQSHIN':'مقشن'
+};
+
+let currentLang = 'ar';
+let currentTheme = 'immersive';
+let charts = {};
+
+const COLORS = ['#00d4ff','#7c3aed','#10b981','#f59e0b','#ef4444','#a855f7','#06d6a0','#fbbf24','#60a5fa','#f472b6'];
+const COLORS_TRANSPARENT = COLORS.map(c => c + '55');
+
+function fmt(n) { return n ? n.toLocaleString('en-US') : '0'; }
+function pct(n, total) { return ((n/total)*100).toFixed(1) + '%'; }
+
+function wName(w) {
+  if (currentLang === 'ar') return WILAYAT_AR[w] || w;
+  return w.replace('SHALIM WA JUZUR AL HALLANIYAT','SHALIM & AL HALLANIYAT');
+}
+function mName(m) {
+  return currentLang === 'ar' ? MONTHS_AR[m] : MONTHS_EN[m];
+}
+
+// ============================
+// THEME / LANG
+// ============================
+function setTheme(t) {
+  currentTheme = t;
+  document.body.className = t === 'bento' ? 'theme-bento' : t === 'luxury' ? 'theme-luxury' : '';
+  document.querySelectorAll('.theme-btns .ctrl-btn').forEach((b,i) => {
+    b.classList.toggle('active', ['immersive','bento','luxury'][i] === t);
+  });
+  destroyCharts();
+  setTimeout(() => initCharts(), 50);
+}
+
+function setLang(l) {
+  currentLang = l;
+  document.documentElement.lang = l;
+  document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+  document.querySelectorAll('.lang-btns .ctrl-btn').forEach((b,i) => {
+    b.classList.toggle('active', (i===0&&l==='ar')||(i===1&&l==='en'));
+  });
+  document.querySelectorAll('[data-ar]').forEach(el => {
+    const key = l === 'ar' ? 'ar' : 'en';
+    if (el.dataset[key]) el.textContent = el.dataset[key];
+  });
+  destroyCharts();
+  setTimeout(() => { initCharts(); updateAllPages(); }, 50);
+}
+
+function getChartDefaults() {
+  const style = getComputedStyle(document.body);
+  const text = style.getPropertyValue('--text').trim() || '#f1f5f9';
+  const text2 = style.getPropertyValue('--text2').trim() || '#94a3b8';
+  const border = style.getPropertyValue('--border').trim() || 'rgba(255,255,255,0.08)';
+  return { text, text2, border };
+}
+
+function makeChart(id, type, labels, datasets, opts={}) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return;
+  if (charts[id]) { charts[id].destroy(); }
+  const d = getChartDefaults();
+  const isRTL = currentLang === 'ar';
+  charts[id] = new Chart(ctx, {
+    type,
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      animation: { duration: 600, easing: 'easeOutQuart' },
+      plugins: {
+        legend: {
+          labels: { color: d.text2, font: { family: "'Cairo','Tajawal',sans-serif", size: 11 }, padding: 12, boxWidth: 10 },
+          position: type === 'pie' || type === 'doughnut' ? 'right' : 'top'
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0,0,0,0.85)',
+          titleColor: '#fff', bodyColor: '#ccc',
+          titleFont: { family: "'Cairo','Tajawal',sans-serif" },
+          bodyFont: { family: "'Cairo','Tajawal',sans-serif" },
+          callbacks: {
+            label: ctx => ' ' + fmt(ctx.parsed.y ?? ctx.parsed ?? 0)
+          }
+        }
+      },
+      scales: type !== 'pie' && type !== 'doughnut' && type !== 'radar' ? {
+        x: { ticks: { color: d.text2, font: { size: 10, family: "'Cairo','Tajawal',sans-serif" } }, grid: { color: d.border } },
+        y: { ticks: { color: d.text2, font: { size: 10, family: "'Cairo','Tajawal',sans-serif" }, callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(0)+'K' : v }, grid: { color: d.border } }
+      } : {},
+      ...opts
+    }
+  });
+}
+
+function destroyCharts() {
+  Object.values(charts).forEach(c => { try { c.destroy(); } catch(e){} });
+  charts = {};
+}
+
+// ============================
+// PAGE NAVIGATION
+// ============================
+function gotoPage(p) {
+  document.querySelectorAll('.page-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const pg = document.getElementById('page-' + p);
+  if (pg) pg.classList.add('active');
+  const items = document.querySelectorAll('.nav-item');
+  const pages = ['overview','wilayat','estab','visit','year','month','workday'];
+  const idx = pages.indexOf(p);
+  if (items[idx]) items[idx].classList.add('active');
+  setTimeout(() => { destroyCharts(); initCharts(); updateAllPages(); }, 30);
+}
+
+// ============================
+// CHART INIT
+// ============================
+function initCharts() {
+  const wilayatLabels = Object.keys(DATA.by_wilayat).map(w => wName(w));
+  const wilayatVals = Object.values(DATA.by_wilayat);
+  const months = currentLang === 'ar' ? MONTHS_AR.slice(1) : MONTHS_EN.slice(1);
+
+  // Page 1 charts
+  if (document.getElementById('c-wilayat-pie')) {
+    makeChart('c-wilayat-pie','doughnut', wilayatLabels, [{data: wilayatVals, backgroundColor: COLORS, borderWidth: 2, borderColor: 'transparent', hoverOffset: 8}],
+      { plugins: { legend: { position: 'right' }, tooltip: { callbacks: { label: ctx => ` ${wName(Object.keys(DATA.by_wilayat)[ctx.dataIndex])}: ${fmt(ctx.parsed)} (${pct(ctx.parsed, DATA.total)})` } } } });
+
+    makeChart('c-yearly-bar','bar',['2023','2024','2025'],[{label: currentLang==='ar'?'الزيارات':'Visits', data:[1918747,1878414,1882931], backgroundColor: [COLORS[0]+'cc',COLORS[1]+'cc',COLORS[2]+'cc'], borderRadius: 8, borderWidth: 0}]);
+
+    makeChart('c-enc-donut','doughnut',
+      currentLang==='ar'?['عيادات خارجية','طوارئ','مجتمعية']:['OPD','Emergency','Community'],
+      [{data:[5382949,290729,6414], backgroundColor:[COLORS[2],COLORS[4],COLORS[1]], borderWidth:0, hoverOffset:6}],
+      {plugins:{legend:{position:'bottom'}}});
+
+    makeChart('c-shift-donut','doughnut',
+      currentLang==='ar'?['صباحي','مسائي','ليلي']:['Morning','Afternoon','Night'],
+      [{data:[3015949,1811381,852762], backgroundColor:[COLORS[0],COLORS[3],COLORS[1]], borderWidth:0}],
+      {plugins:{legend:{position:'bottom'}}});
+
+    makeChart('c-holiday-donut','doughnut',
+      currentLang==='ar'?['أيام العمل','إجازات']:['Working Days','Holidays'],
+      [{data:[4699520,980572], backgroundColor:[COLORS[2],COLORS[3]], borderWidth:0}],
+      {plugins:{legend:{position:'bottom'}}});
+
+    makeChart('c-monthly-line','line', months,
+      [
+        {label:'2023', data:Object.values(DATA.by_year_month['2023']), borderColor:COLORS[0], backgroundColor:COLORS[0]+'22', tension:0.4, fill:true, borderWidth:2, pointRadius:3},
+        {label:'2024', data:Object.values(DATA.by_year_month['2024']), borderColor:COLORS[1], backgroundColor:COLORS[1]+'22', tension:0.4, fill:true, borderWidth:2, pointRadius:3},
+        {label:'2025', data:Object.values(DATA.by_year_month['2025']), borderColor:COLORS[2], backgroundColor:COLORS[2]+'22', tension:0.4, fill:true, borderWidth:2, pointRadius:3}
+      ]);
+  }
+
+  // Page 2
+  if (document.getElementById('c-wil-bar')) updateWilayatPage();
+  // Page 3
+  if (document.getElementById('c-estab-bar')) updateEstabPage();
+  // Page 4
+  if (document.getElementById('c-enc-bar')) updateVisitPage();
+  // Page 5
+  if (document.getElementById('c-year-comp')) updateYearPage();
+  // Page 6
+  if (document.getElementById('c-month-bar')) updateMonthPage();
+  // Page 7
+  if (document.getElementById('c-wd-shift')) updateWorkdayPage();
+}
+
+function updateAllPages() {
+  updateWilayatPage();
+  updateEstabPage();
+  updateVisitPage();
+  updateYearPage();
+  updateMonthPage();
+  updateWorkdayPage();
+}
+
+// ============================
+// PAGE 2: WILAYAT
+// ============================
+function updateWilayatPage() {
+  const wFilter = document.getElementById('f-wilayat')?.value || 'ALL';
+  const yFilter = document.getElementById('f-wil-year')?.value || 'ALL';
+  const months = currentLang === 'ar' ? MONTHS_AR.slice(1) : MONTHS_EN.slice(1);
+
+  const wilayats = Object.keys(DATA.by_wilayat);
+  let filteredWils = wFilter === 'ALL' ? wilayats : [wFilter];
+
+  // KPIs
+  const kpiDiv = document.getElementById('wil-kpis');
+  if (kpiDiv) {
+    const totals = filteredWils.reduce((a, w) => {
+      const total = yFilter === 'ALL' ? DATA.by_wilayat[w] :
+        (DATA.by_wil_year[w]?.[yFilter] || 0);
+      return { visits: a.visits + total, opd: a.opd + (DATA.by_wil_enc[w]?.OPD||0), ane: a.ane + (DATA.by_wil_enc[w]?.ANE||0) };
+    }, {visits:0,opd:0,ane:0});
+
+    kpiDiv.innerHTML = `
+      <div class="kpi-card" style="--c1:#00d4ff;--c2:#7c3aed;"><div class="kpi-icon">👥</div><div class="kpi-value">${fmt(totals.visits)}</div><div class="kpi-label">${currentLang==='ar'?'إجمالي الزيارات':'Total Visits'}</div></div>
+      <div class="kpi-card" style="--c1:#10b981;--c2:#06d6a0;"><div class="kpi-icon">🗺️</div><div class="kpi-value">${filteredWils.length}</div><div class="kpi-label">${currentLang==='ar'?'عدد الولايات':'Wilayats'}</div></div>
+      <div class="kpi-card" style="--c1:#f59e0b;--c2:#fbbf24;"><div class="kpi-icon">🏥</div><div class="kpi-value">${fmt(Math.round(totals.visits/filteredWils.length))}</div><div class="kpi-label">${currentLang==='ar'?'متوسط لكل ولاية':'Avg per Wilayat'}</div></div>
+      <div class="kpi-card" style="--c1:#7c3aed;--c2:#a855f7;"><div class="kpi-icon">🚨</div><div class="kpi-value">${pct(totals.ane, totals.visits+1)}</div><div class="kpi-label">${currentLang==='ar'?'نسبة الطوارئ':'Emergency Rate'}</div></div>
+    `;
+  }
+
+  // Bar chart
+  const vals = filteredWils.map(w => yFilter === 'ALL' ? DATA.by_wilayat[w] : (DATA.by_wil_year[w]?.[yFilter]||0));
+  const labels = filteredWils.map(w => wName(w));
+  makeChart('c-wil-bar','bar', labels, [{label: currentLang==='ar'?'الزيارات':'Visits', data: vals, backgroundColor: COLORS.slice(0, filteredWils.length).map(c=>c+'cc'), borderRadius: 8, borderWidth: 0}]);
+
+  // Stacked enc chart
+  const encDs = ['OPD','ANE','COMMUNITY'].map((enc, i) => ({
+    label: enc === 'OPD' ? (currentLang==='ar'?'عيادات خارجية':'OPD') : enc === 'ANE' ? (currentLang==='ar'?'طوارئ':'Emergency') : (currentLang==='ar'?'مجتمعية':'Community'),
+    data: filteredWils.map(w => DATA.by_wil_enc[w]?.[enc]||0),
+    backgroundColor: [COLORS[2], COLORS[4], COLORS[1]][i]+'cc',
+    borderRadius: 4, borderWidth: 0
+  }));
+  makeChart('c-wil-enc-stacked','bar', labels, encDs, {scales:{x:{stacked:true},y:{stacked:true}}});
+
+  // Year trend
+  const yearDs = ['2023','2024','2025'].map((yr, i) => ({
+    label: yr,
+    data: filteredWils.map(w => DATA.by_wil_year[w]?.[yr]||0),
+    backgroundColor: COLORS[i]+'cc', borderRadius: 6, borderWidth: 0
+  }));
+  makeChart('c-wil-years','bar', labels, yearDs);
+
+  // Progress list
+  const allVals = wilayats.map(w => ({w, v: yFilter==='ALL'?DATA.by_wilayat[w]:(DATA.by_wil_year[w]?.[yFilter]||0)})).sort((a,b)=>b.v-a.v);
+  const maxV = allVals[0]?.v || 1;
+  const pl = document.getElementById('wil-progress-list');
+  if (pl) pl.innerHTML = allVals.map((item,i) => `
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">${i+1}. ${wName(item.w)}</span><span class="progress-val">${fmt(item.v)}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${(item.v/maxV*100).toFixed(1)}%;background:${COLORS[i%COLORS.length]};"></div></div>
+    </div>`).join('');
+}
+
+// ============================
+// PAGE 3: ESTABLISHMENTS
+// ============================
+function updateEstabPage() {
+  const wFilter = document.getElementById('f-estab-wil')?.value   || 'ALL';
+  const yFilter = document.getElementById('f-estab-year')?.value  || 'ALL';
+  const mFilter = document.getElementById('f-estab-month')?.value || 'ALL';
+
+  // Build estab → value map using real tables
+  const wilayats = wFilter === 'ALL' ? Object.keys(DATA.by_wil_estab) : [wFilter];
+  let allEstabs = {};
+
+  wilayats.forEach(w => {
+    Object.keys(DATA.by_wil_estab[w]||{}).forEach(e => {
+      let v = 0;
+      if (mFilter !== 'ALL') {
+        // use by_estab_year_month for exact month data
+        if (yFilter !== 'ALL') {
+          v = DATA.by_estab_year_month[e]?.[yFilter]?.[mFilter] || 0;
+        } else {
+          // sum across all years for this month
+          ['2023','2024','2025'].forEach(yr => {
+            v += DATA.by_estab_year_month[e]?.[yr]?.[mFilter] || 0;
+          });
+        }
+      } else if (yFilter !== 'ALL') {
+        v = DATA.by_estab_year[e]?.[yFilter] || 0;
+      } else {
+        v = DATA.by_wil_estab[w][e] || 0;
+      }
+      allEstabs[e] = (allEstabs[e] || 0) + v;
+    });
+  });
+
+  const sorted = Object.entries(allEstabs).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]);
+  const top15  = sorted.slice(0, 15);
+  const total  = sorted.reduce((a,[,b])=>a+b, 0) || 1;
+
+  // Dynamic chart title
+  const chartTitleEl = document.querySelector('#page-estab .chart-card .chart-title');
+  if (chartTitleEl) {
+    const n = Math.min(sorted.length, 15);
+    chartTitleEl.textContent = currentLang==='ar' ? `أعلى ${n} مؤسسة صحية تردداً` : `Top ${n} Health Facilities by Visits`;
+  }
+
+  makeChart('c-estab-bar','bar',
+    top15.map(([e]) => e.length > 28 ? e.slice(0,27)+'…' : e),
+    [{
+      label: currentLang==='ar'?'الزيارات':'Visits',
+      data: top15.map(([,v])=>v),
+      backgroundColor: COLORS.slice(0,15).map(c=>c+'cc'),
+      borderRadius: 6, borderWidth: 0
+    }],
+    {indexAxis:'y', scales:{y:{ticks:{font:{size:9}}}}});
+
+  const maxV = sorted[0]?.[1] || 1;
+  const pl = document.getElementById('estab-progress-list');
+  if (pl) pl.innerHTML = sorted.map(([e,v],i) => `
+    <div class="progress-item">
+      <div class="progress-header"><span class="progress-name">${i+1}. ${e}</span><span class="progress-val">${fmt(v)}</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${(v/maxV*100).toFixed(1)}%;background:${COLORS[i%COLORS.length]};"></div></div>
+    </div>`).join('');
+
+  const tbl = document.getElementById('estab-table');
+  if (tbl) {
+    tbl.innerHTML = `<thead><tr>
+      <th class="rank">#</th>
+      <th>${currentLang==='ar'?'المؤسسة':'Facility'}</th>
+      <th>${currentLang==='ar'?'الولاية':'Wilayat'}</th>
+      <th>${currentLang==='ar'?'الزيارات':'Visits'}</th>
+      <th>${currentLang==='ar'?'النسبة':'%'}</th>
+    </tr></thead><tbody>${sorted.map(([e,v],i) => {
+      const wilEntry = Object.entries(DATA.by_wil_estab).find(([,es])=>es[e]!==undefined);
+      const wilName  = wilEntry ? wName(wilEntry[0]) : '-';
+      return `<tr><td class="rank">${i+1}</td><td>${e}</td><td>${wilName}</td><td class="num">${fmt(v)}</td><td class="num">${pct(v,total)}</td></tr>`;
+    }).join('')}</tbody>`;
+  }
+}
+
+// ============================
+// ============================
+// HELPERS: populate estab dropdowns
+// ============================
+function populateEstabSelect(selectId, wilayat) {
+  const sel = document.getElementById(selectId);
+  if (!sel) return;
+  const prev = sel.value;
+  sel.innerHTML = `<option value="ALL">${currentLang==='ar'?'جميع المؤسسات':'All Facilities'}</option>`;
+  const wils = wilayat === 'ALL' ? Object.keys(DATA.by_wil_estab) : [wilayat];
+  wils.forEach(w => {
+    Object.keys(DATA.by_wil_estab[w]||{}).forEach(e => {
+      const opt = document.createElement('option');
+      opt.value = e;
+      opt.textContent = e.length > 38 ? e.slice(0,37)+'…' : e;
+      sel.appendChild(opt);
+    });
+  });
+  if ([...sel.options].some(o => o.value === prev)) sel.value = prev;
+  else sel.value = 'ALL';
+}
+
+// ============================
+// FILTER CHANGE CASCADES
+// ============================
+function onEncWilChange()   { populateEstabSelect('f-enc-estab',  document.getElementById('f-enc-wil').value);  updateVisitPage(); }
+function onYearWilChange()  { populateEstabSelect('f-year-estab', document.getElementById('f-year-wil').value); updateYearPage(); }
+function onMonthWilChange() { populateEstabSelect('f-month-estab',document.getElementById('f-month-wil').value);updateMonthPage(); }
+function onWdWilChange()    { populateEstabSelect('f-wd-estab',   document.getElementById('f-wd-wil').value);   updateWorkdayPage(); }
+
+// ============================
+// SCOPE RESOLVER — returns actual values from real tables
+// ============================
+function resolveScope(wilF, estabF, yearF) {
+  // returns { total, shift, holiday, enc, wil_enc }
+  const wils = wilF === 'ALL' ? Object.keys(DATA.by_wilayat) : [wilF];
+
+  function sumObj(obj, keys) {
+    if (!obj) return {};
+    const r = {};
+    (keys || Object.keys(obj)).forEach(k => { r[k] = obj[k] || 0; });
+    return r;
+  }
+
+  function mergeAdd(a, b) {
+    const r = {...a};
+    Object.keys(b).forEach(k => r[k] = (r[k]||0) + (b[k]||0));
+    return r;
+  }
+
+  let total = 0, shift = {}, holiday = {}, enc = {}, wilEnc = {};
+
+  if (estabF !== 'ALL') {
+    // Single estab
+    if (yearF !== 'ALL') {
+      total = DATA.by_estab_year[estabF]?.[yearF] || 0;
+      // shift
+      const sy = DATA.by_estab_shift_year[estabF] || {};
+      ['1ST SHIFT (MORNING)','2nd SHIFT (AFTERNOON)','3RD SHIFT (NIGHT)'].forEach(s => {
+        shift[s] = sy[s]?.[yearF] || 0;
+      });
+      // holiday
+      const hy = DATA.by_estab_holiday_year[estabF] || {};
+      ['WORKING DAY','HOLIDAY'].forEach(h => { holiday[h] = hy[h]?.[yearF] || 0; });
+      // enc
+      const ey = DATA.by_estab_enc_year[estabF] || {};
+      ['OPD','ANE','COMMUNITY'].forEach(e => { enc[e] = ey[e]?.[yearF] || 0; });
+    } else {
+      total = Object.values(DATA.by_estab_year[estabF]||{}).reduce((a,b)=>a+b,0);
+      shift   = {...(DATA.by_estab_shift[estabF]||{})};
+      holiday = {...(DATA.by_estab_holiday[estabF]||{})};
+      enc     = {...(DATA.by_estab_enc[estabF]||{})};
+    }
+    wilEnc = null; // not applicable for single estab
+  } else if (wilF !== 'ALL') {
+    // Single wilayat
+    if (yearF !== 'ALL') {
+      total = DATA.by_wil_year[wilF]?.[yearF] || 0;
+      const sy = DATA.by_wil_shift_year[wilF] || {};
+      ['1ST SHIFT (MORNING)','2nd SHIFT (AFTERNOON)','3RD SHIFT (NIGHT)'].forEach(s => {
+        shift[s] = sy[s]?.[yearF] || 0;
+      });
+      const hy = DATA.by_wil_holiday_year[wilF] || {};
+      ['WORKING DAY','HOLIDAY'].forEach(h => { holiday[h] = hy[h]?.[yearF] || 0; });
+      const ey = DATA.by_wil_enc_year[wilF] || {};
+      ['OPD','ANE','COMMUNITY'].forEach(e => { enc[e] = ey[e]?.[yearF] || 0; });
+    } else {
+      total   = DATA.by_wilayat[wilF] || 0;
+      shift   = {...(DATA.by_wil_shift[wilF]||{})};
+      holiday = {...(DATA.by_wil_holiday[wilF]||{})};
+      enc     = {...(DATA.by_wil_enc[wilF]||{})};
+    }
+    wilEnc = null;
+  } else {
+    // All wilayats
+    if (yearF !== 'ALL') {
+      total = DATA.by_year[yearF] || 0;
+      // sum shifts across all wilayats for that year
+      Object.keys(DATA.by_wil_shift_year).forEach(w => {
+        const sy = DATA.by_wil_shift_year[w];
+        ['1ST SHIFT (MORNING)','2nd SHIFT (AFTERNOON)','3RD SHIFT (NIGHT)'].forEach(s => {
+          shift[s] = (shift[s]||0) + (sy[s]?.[yearF]||0);
+        });
+      });
+      Object.keys(DATA.by_wil_holiday_year).forEach(w => {
+        const hy = DATA.by_wil_holiday_year[w];
+        ['WORKING DAY','HOLIDAY'].forEach(h => { holiday[h] = (holiday[h]||0) + (hy[h]?.[yearF]||0); });
+      });
+      Object.keys(DATA.by_wil_enc_year).forEach(w => {
+        const ey = DATA.by_wil_enc_year[w];
+        ['OPD','ANE','COMMUNITY'].forEach(e => { enc[e] = (enc[e]||0) + (ey[e]?.[yearF]||0); });
+      });
+    } else {
+      total   = DATA.total;
+      shift   = {...DATA.by_shift};
+      holiday = {...DATA.by_holiday};
+      enc     = {...DATA.by_enc};
+    }
+    // wilEnc for chart: by wilayat enc (optionally year-filtered)
+    wilEnc = {};
+    Object.keys(DATA.by_wil_enc).forEach(w => {
+      if (yearF !== 'ALL') {
+        wilEnc[w] = {};
+        ['OPD','ANE','COMMUNITY'].forEach(e => { wilEnc[w][e] = DATA.by_wil_enc_year[w]?.[e]?.[yearF]||0; });
+      } else {
+        wilEnc[w] = {...DATA.by_wil_enc[w]};
+      }
+    });
+  }
+  return { total, shift, holiday, enc, wils, wilEnc };
+}
+
+// Monthly data resolver — returns array[12] for months 1..12
+function resolveMonthly(wilF, estabF, yearF) {
+  const years = yearF === 'ALL' ? ['2023','2024','2025'] : [yearF];
+  const result = Array(12).fill(0);
+
+  if (estabF !== 'ALL') {
+    years.forEach(yr => {
+      for (let m = 1; m <= 12; m++) {
+        result[m-1] += DATA.by_estab_year_month[estabF]?.[yr]?.[String(m)] || 0;
+      }
+    });
+  } else if (wilF !== 'ALL') {
+    years.forEach(yr => {
+      for (let m = 1; m <= 12; m++) {
+        result[m-1] += DATA.by_wil_year_month[wilF]?.[yr]?.[String(m)] || 0;
+      }
+    });
+  } else {
+    years.forEach(yr => {
+      for (let m = 1; m <= 12; m++) {
+        result[m-1] += DATA.by_year_month[yr]?.[String(m)] || 0;
+      }
+    });
+  }
+  return result;
+}
+
+// ============================
+// PAGE 4: VISIT TYPES
+// ============================
+function updateVisitPage() {
+  const wilF   = document.getElementById('f-enc-wil')?.value   || 'ALL';
+  const estabF = document.getElementById('f-enc-estab')?.value || 'ALL';
+  const yearF  = document.getElementById('f-enc-year')?.value  || 'ALL';
+  const monthF = document.getElementById('f-enc-month')?.value || 'ALL';
+  const encF   = document.getElementById('f-enc')?.value       || 'ALL';
+
+  const scope = resolveScope(wilF, estabF, yearF);
+  let opd = scope.enc['OPD']||0, ane = scope.enc['ANE']||0, com = scope.enc['COMMUNITY']||0;
+
+  // Apply month filter (proportional from monthly data)
+  if (monthF !== 'ALL') {
+    const monthlyArr = resolveMonthly(wilF, estabF, yearF);
+    const monthTotal = monthlyArr[parseInt(monthF)-1] || 0;
+    const scopeTotal = scope.total || 1;
+    const ratio = monthTotal / scopeTotal;
+    opd = Math.round(opd * ratio); ane = Math.round(ane * ratio); com = Math.round(com * ratio);
+  }
+
+  const tot = opd + ane + com || 1;
+  const encLabels = currentLang==='ar' ? ['عيادات خارجية','طوارئ','مجتمعية'] : ['OPD','Emergency','Community'];
+  const rawVals = [opd, ane, com];
+  const filteredVals = encF === 'ALL' ? rawVals : rawVals.map((v,i)=>(['OPD','ANE','COMMUNITY'][i]===encF?v:0));
+
+  const kpiDiv = document.getElementById('visit-kpis');
+  if (kpiDiv) kpiDiv.innerHTML = `
+    <div class="kpi-card" style="--c1:#10b981;--c2:#06d6a0;"><div class="kpi-icon">🩺</div><div class="kpi-value">${fmt(opd)}</div><div class="kpi-label">${currentLang==='ar'?'عيادات خارجية OPD':'OPD Visits'}</div><div class="kpi-sub">${pct(opd,tot)}</div></div>
+    <div class="kpi-card" style="--c1:#ef4444;--c2:#f59e0b;"><div class="kpi-icon">🚨</div><div class="kpi-value">${fmt(ane)}</div><div class="kpi-label">${currentLang==='ar'?'طوارئ ANE':'Emergency ANE'}</div><div class="kpi-sub">${pct(ane,tot)}</div></div>
+    <div class="kpi-card" style="--c1:#7c3aed;--c2:#a855f7;"><div class="kpi-icon">👥</div><div class="kpi-value">${fmt(com)}</div><div class="kpi-label">${currentLang==='ar'?'مجتمعية':'Community'}</div><div class="kpi-sub">${pct(com,tot)}</div></div>
+    <div class="kpi-card" style="--c1:#00d4ff;--c2:#0ea5e9;"><div class="kpi-icon">📊</div><div class="kpi-value">${fmt(tot)}</div><div class="kpi-label">${currentLang==='ar'?'الإجمالي':'Total'}</div></div>
+  `;
+
+  makeChart('c-enc-bar','bar', encLabels, [{
+    label: currentLang==='ar'?'الزيارات':'Visits',
+    data: filteredVals,
+    backgroundColor:[COLORS[2]+'cc',COLORS[4]+'cc',COLORS[1]+'cc'], borderRadius:10, borderWidth:0
+  }]);
+
+  makeChart('c-enc-pie','doughnut', encLabels, [{
+    data: filteredVals, backgroundColor:[COLORS[2],COLORS[4],COLORS[1]], borderWidth:0, hoverOffset:8
+  }], {plugins:{legend:{position:'bottom'}}});
+
+  // By wilayat stacked enc chart
+  const wils = wilF === 'ALL' ? Object.keys(DATA.by_wilayat) : [wilF];
+  const encs = encF === 'ALL' ? ['OPD','ANE','COMMUNITY'] : [encF];
+  const encColors = {'OPD':COLORS[2],'ANE':COLORS[4],'COMMUNITY':COLORS[1]};
+  const ds = encs.map(enc => {
+    const label = enc==='OPD'?(currentLang==='ar'?'عيادات خارجية':'OPD'):enc==='ANE'?(currentLang==='ar'?'طوارئ':'Emergency'):(currentLang==='ar'?'مجتمعية':'Community');
+    return {
+      label,
+      data: wils.map(w => {
+        if (estabF !== 'ALL') return scope.enc[enc]||0;
+        return yearF !== 'ALL' ? (DATA.by_wil_enc_year[w]?.[enc]?.[yearF]||0) : (DATA.by_wil_enc[w]?.[enc]||0);
+      }),
+      backgroundColor: encColors[enc]+'cc', borderRadius:4, borderWidth:0
+    };
+  });
+  makeChart('c-enc-wil','bar', wils.map(w=>wName(w)), ds, {scales:{x:{stacked:true},y:{stacked:true}}});
+}
+
+// ============================
+// PAGE 5: YEAR
+// ============================
+function updateYearPage() {
+  const wilF   = document.getElementById('f-year-wil')?.value   || 'ALL';
+  const estabF = document.getElementById('f-year-estab')?.value || 'ALL';
+  const yFilter= document.getElementById('f-year')?.value       || 'ALL';
+  const months = currentLang === 'ar' ? MONTHS_AR.slice(1) : MONTHS_EN.slice(1);
+
+  function getYearVal(yr) {
+    if (estabF !== 'ALL') return DATA.by_estab_year[estabF]?.[yr] || 0;
+    if (wilF !== 'ALL')   return DATA.by_wil_year[wilF]?.[yr] || 0;
+    return DATA.by_year[yr] || 0;
+  }
+
+  const y23 = getYearVal('2023'), y24 = getYearVal('2024'), y25 = getYearVal('2025');
+  const avg  = Math.round((y23+y24+y25)/3);
+  const diff2425 = y23 ? ((y24-y23)/y23*100).toFixed(1) : '0';
+  const diff2526 = y24 ? ((y25-y24)/y24*100).toFixed(1) : '0';
+
+  const kpiDiv = document.getElementById('year-kpis');
+  if (kpiDiv) kpiDiv.innerHTML = `
+    <div class="kpi-card" style="--c1:#00d4ff;--c2:#7c3aed;"><div class="kpi-icon">📅</div><div class="kpi-value">${fmt(y23)}</div><div class="kpi-label">2023</div></div>
+    <div class="kpi-card" style="--c1:#10b981;--c2:#06d6a0;"><div class="kpi-icon">📅</div><div class="kpi-value">${fmt(y24)}</div><div class="kpi-label">2024</div><div class="kpi-sub" style="color:${parseFloat(diff2425)>=0?'var(--success)':'var(--danger)'};">${parseFloat(diff2425)>=0?'▲':'▼'} ${Math.abs(diff2425)}%</div></div>
+    <div class="kpi-card" style="--c1:#f59e0b;--c2:#fbbf24;"><div class="kpi-icon">📅</div><div class="kpi-value">${fmt(y25)}</div><div class="kpi-label">2025</div><div class="kpi-sub" style="color:${parseFloat(diff2526)>=0?'var(--success)':'var(--danger)'};">${parseFloat(diff2526)>=0?'▲':'▼'} ${Math.abs(diff2526)}%</div></div>
+    <div class="kpi-card" style="--c1:#7c3aed;--c2:#a855f7;"><div class="kpi-icon">📊</div><div class="kpi-value">${fmt(avg)}</div><div class="kpi-label">${currentLang==='ar'?'متوسط سنوي':'Annual Average'}</div></div>
+  `;
+
+  const dispYears = yFilter === 'ALL' ? ['2023','2024','2025'] : [yFilter];
+  const yVals = dispYears.map(y => getYearVal(y));
+
+  makeChart('c-year-comp','bar', dispYears, [{
+    label: currentLang==='ar'?'الزيارات':'Visits',
+    data: yVals,
+    backgroundColor: dispYears.map((_,i)=>COLORS[i]+'cc'), borderRadius:10, borderWidth:0
+  }]);
+
+  makeChart('c-year-pie','doughnut', dispYears, [{
+    data: yVals, backgroundColor: dispYears.map((_,i)=>COLORS[i]), borderWidth:0, hoverOffset:8
+  }], {plugins:{legend:{position:'bottom'}}});
+
+  // Monthly breakdown — real data per year
+  const monthDs = dispYears.map((yr,i) => ({
+    label: yr,
+    data: resolveMonthly(wilF, estabF, yr),
+    borderColor: COLORS[i], backgroundColor: COLORS[i]+'22', tension:0.4, fill:true, borderWidth:2, pointRadius:3
+  }));
+  makeChart('c-year-monthly','line', months, monthDs);
+
+  // Wilayat comparison
+  const wils = wilF === 'ALL' ? Object.keys(DATA.by_wilayat) : [wilF];
+  const wilDs = dispYears.map((yr,i) => ({
+    label: yr,
+    data: wils.map(w => {
+      if (estabF !== 'ALL') return DATA.by_estab_year[estabF]?.[yr] || 0;
+      return DATA.by_wil_year[w]?.[yr] || 0;
+    }),
+    backgroundColor: COLORS[i]+'cc', borderRadius:4, borderWidth:0
+  }));
+  makeChart('c-year-wil','bar', wils.map(w=>wName(w)), wilDs);
+}
+
+// ============================
+// PAGE 6: MONTH
+// ============================
+function updateMonthPage() {
+  const wilF   = document.getElementById('f-month-wil')?.value   || 'ALL';
+  const estabF = document.getElementById('f-month-estab')?.value || 'ALL';
+  const mFilter= document.getElementById('f-month')?.value       || 'ALL';
+  const yFilter= document.getElementById('f-month-year')?.value  || 'ALL';
+  const months = currentLang === 'ar' ? MONTHS_AR.slice(1) : MONTHS_EN.slice(1);
+
+  // Aggregated monthly values for selected scope
+  const aggArr = resolveMonthly(wilF, estabF, yFilter);
+  const aggMonth = {};
+  for (let m = 1; m <= 12; m++) aggMonth[m] = aggArr[m-1];
+
+  // KPIs
+  const kpiDiv = document.getElementById('month-kpis');
+  const monthVals = Object.values(aggMonth);
+  const maxMonth = Math.max(...monthVals);
+  const minMonth = Math.min(...monthVals.filter(v=>v>0));
+  const maxIdx = monthVals.indexOf(maxMonth) + 1;
+  const minIdx = monthVals.indexOf(minMonth) + 1;
+  const avgMonth = Math.round(monthVals.reduce((a,b)=>a+b,0) / monthVals.filter(v=>v>0).length);
+
+  if (kpiDiv) kpiDiv.innerHTML = `
+    <div class="kpi-card" style="--c1:#10b981;--c2:#06d6a0;"><div class="kpi-icon">📈</div><div class="kpi-value">${fmt(maxMonth)}</div><div class="kpi-label">${currentLang==='ar'?'أعلى شهر':'Highest Month'}</div><div class="kpi-sub">${mName(maxIdx)}</div></div>
+    <div class="kpi-card" style="--c1:#ef4444;--c2:#f59e0b;"><div class="kpi-icon">📉</div><div class="kpi-value">${fmt(minMonth)}</div><div class="kpi-label">${currentLang==='ar'?'أدنى شهر':'Lowest Month'}</div><div class="kpi-sub">${mName(minIdx)}</div></div>
+    <div class="kpi-card" style="--c1:#00d4ff;--c2:#7c3aed;"><div class="kpi-icon">📊</div><div class="kpi-value">${fmt(avgMonth)}</div><div class="kpi-label">${currentLang==='ar'?'المتوسط الشهري':'Monthly Average'}</div></div>
+    <div class="kpi-card" style="--c1:#7c3aed;--c2:#a855f7;"><div class="kpi-icon">📅</div><div class="kpi-value">${fmt(maxMonth - minMonth)}</div><div class="kpi-label">${currentLang==='ar'?'فارق الذروة':'Peak Range'}</div></div>
+  `;
+
+  const barColors = Object.values(aggMonth).map((_,i) =>
+    mFilter === 'ALL' || i+1 === parseInt(mFilter) ? COLORS[i%COLORS.length]+'cc' : COLORS[i%COLORS.length]+'22'
+  );
+
+  makeChart('c-month-bar','bar', months, [{
+    label: currentLang==='ar'?'الزيارات':'Visits',
+    data: Object.values(aggMonth),
+    backgroundColor: barColors, borderRadius:8, borderWidth:0
+  }]);
+
+  makeChart('c-month-radar','radar', months, [{
+    label: currentLang==='ar'?'الزيارات':'Visits',
+    data: Object.values(aggMonth),
+    borderColor: COLORS[0], backgroundColor: COLORS[0]+'33', pointBackgroundColor: COLORS[0], borderWidth:2
+  }], {scales:{r:{ticks:{color:'#888',font:{size:9}},grid:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#ccc',font:{size:10}}}}});
+
+  const lineYears = yFilter === 'ALL' ? ['2023','2024','2025'] : [yFilter];
+  const lineDs = lineYears.map((yr,i) => ({
+    label: yr,
+    data: resolveMonthly(wilF, estabF, yr),
+    borderColor: COLORS[i], backgroundColor: COLORS[i]+'22', tension:0.4, fill:false, borderWidth:2, pointRadius:3
+  }));
+  makeChart('c-month-line','line', months, lineDs);
+}
+
+// ============================
+// PAGE 7: WORKDAY
+// ============================
+function updateWorkdayPage() {
+  const wilF   = document.getElementById('f-wd-wil')?.value   || 'ALL';
+  const estabF = document.getElementById('f-wd-estab')?.value || 'ALL';
+  const yearF  = document.getElementById('f-wd-year')?.value  || 'ALL';
+  const daytypeF = document.getElementById('f-daytype')?.value || 'ALL';
+  const shiftF   = document.getElementById('f-shift')?.value   || 'ALL';
+
+  const scope = resolveScope(wilF, estabF, yearF);
+  const { total: scopeTotal, shift, holiday } = scope;
+
+  const morning   = shift['1ST SHIFT (MORNING)']    || 0;
+  const afternoon = shift['2nd SHIFT (AFTERNOON)']   || 0;
+  const night     = shift['3RD SHIFT (NIGHT)']       || 0;
+  const workDays  = holiday['WORKING DAY']            || 0;
+  const holidays  = holiday['HOLIDAY']                || 0;
+  const totHol    = workDays + holidays || 1;
+  const totShift  = morning + afternoon + night || 1;
+
+  // Apply shift/daytype filter for display
+  const dispShiftMorning   = (shiftF === 'ALL' || shiftF === '1ST SHIFT (MORNING)')    ? morning   : 0;
+  const dispShiftAfternoon = (shiftF === 'ALL' || shiftF === '2nd SHIFT (AFTERNOON)')   ? afternoon : 0;
+  const dispShiftNight     = (shiftF === 'ALL' || shiftF === '3RD SHIFT (NIGHT)')       ? night     : 0;
+  const dispWorkDays  = (daytypeF === 'ALL' || daytypeF === 'WORKING DAY') ? workDays  : 0;
+  const dispHolidays  = (daytypeF === 'ALL' || daytypeF === 'HOLIDAY')     ? holidays  : 0;
+
+  const kpiDiv = document.getElementById('wd-kpis');
+  if (kpiDiv) kpiDiv.innerHTML = `
+    <div class="kpi-card" style="--c1:#10b981;--c2:#059669;"><div class="kpi-icon">📋</div><div class="kpi-value">${fmt(workDays)}</div><div class="kpi-label">${currentLang==='ar'?'أيام العمل':'Working Days'}</div><div class="kpi-sub">${pct(workDays,totHol)}</div></div>
+    <div class="kpi-card" style="--c1:#f59e0b;--c2:#d97706;"><div class="kpi-icon">🎉</div><div class="kpi-value">${fmt(holidays)}</div><div class="kpi-label">${currentLang==='ar'?'أيام الإجازات':'Holidays'}</div><div class="kpi-sub">${pct(holidays,totHol)}</div></div>
+    <div class="kpi-card" style="--c1:#00d4ff;--c2:#0ea5e9;"><div class="kpi-icon">🌅</div><div class="kpi-value">${fmt(morning)}</div><div class="kpi-label">${currentLang==='ar'?'شفت الصباح':'Morning Shift'}</div><div class="kpi-sub">${pct(morning,totShift)}</div></div>
+    <div class="kpi-card" style="--c1:#7c3aed;--c2:#6366f1;"><div class="kpi-icon">🌙</div><div class="kpi-value">${fmt(night)}</div><div class="kpi-label">${currentLang==='ar'?'شفت الليل':'Night Shift'}</div><div class="kpi-sub">${pct(night,totShift)}</div></div>
+  `;
+
+  makeChart('c-wd-shift','doughnut',
+    currentLang==='ar'?['صباحي','مسائي','ليلي']:['Morning','Afternoon','Night'],
+    [{data:[dispShiftMorning,dispShiftAfternoon,dispShiftNight], backgroundColor:[COLORS[0],COLORS[3],COLORS[1]], borderWidth:0, hoverOffset:8}],
+    {plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed)} (${pct(ctx.parsed,totShift)})`}}}});
+
+  makeChart('c-wd-holiday','doughnut',
+    currentLang==='ar'?['أيام العمل','إجازات']:['Working Days','Holidays'],
+    [{data:[dispWorkDays,dispHolidays], backgroundColor:[COLORS[2],COLORS[3]], borderWidth:0, hoverOffset:8}],
+    {plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:ctx=>` ${fmt(ctx.parsed)} (${pct(ctx.parsed,totHol)})`}}}});
+
+  // Shifts by wilayat — using real tables
+  const wils = wilF === 'ALL' ? Object.keys(DATA.by_wilayat) : [wilF];
+  const shiftKeys = ['1ST SHIFT (MORNING)','2nd SHIFT (AFTERNOON)','3RD SHIFT (NIGHT)'];
+  const shiftLabels = currentLang==='ar'?['صباحي','مسائي','ليلي']:['Morning','Afternoon','Night'];
+  const shiftDs = shiftKeys.map((sk,i) => {
+    if (shiftF !== 'ALL' && sk !== shiftF) return null;
+    return {
+      label: shiftLabels[i],
+      data: wils.map(w => {
+        if (estabF !== 'ALL') {
+          return yearF !== 'ALL' ? (DATA.by_estab_shift_year[estabF]?.[sk]?.[yearF]||0) : (DATA.by_estab_shift[estabF]?.[sk]||0);
+        }
+        return yearF !== 'ALL' ? (DATA.by_wil_shift_year[w]?.[sk]?.[yearF]||0) : (DATA.by_wil_shift[w]?.[sk]||0);
+      }),
+      backgroundColor: [COLORS[0],COLORS[3],COLORS[1]][i]+'cc', borderRadius:4, borderWidth:0
+    };
+  }).filter(Boolean);
+  makeChart('c-wd-wil-shift','bar', wils.map(w=>wName(w)), shiftDs, {scales:{x:{stacked:true},y:{stacked:true}}});
+}
+
+// INIT
+// ============================
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    initCharts();
+  }, 200);
+});
+</script>
+</body>
+</html>
